@@ -1,0 +1,20 @@
+{
+  "name": "Autocomplete",
+  "version": "0.0.1",
+  "description": "An autocomplete widget",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lonelyplanet/autocomplete.git"
+  },
+  "author": "Lonely Planet",
+  "license": "GPLV2",
+  "devDependencies": {
+    "grunt-contrib-jasmine": "~0.5.3",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-jscs-checker": "~0.4.1",
+    "matchdep": "latest",
+    "grunt-contrib-connect": "~0.7.1"
+  }
+}
