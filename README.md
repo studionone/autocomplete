@@ -1,34 +1,27 @@
 Autocomplete
 ============
 
-An autocomplete widget. Built to be as reusable as possible. Means a tiny bit more work for the instantiator, but hopefully flexible and simple enough to be used in different contexts.
+An autocomplete widget. Built to be as reusable as possible. Means a tiny bit more work for the instantiator, but hopefully flexible and simple enough to be used in different contexts. Clone this repository and open up index.html. You'll be presented with a sample of this autocomplete. It is running on local data, and should give you a good feel of what this autocomplete does. Tailor it to your needs and use it in your own project!
 
 ![autocomplete](/autocomplete-example.png)
 
 ## Usage
-The AutoComplete widget is always instantiated with an html element. This element is expected to be an `input` element, as the user will type and be presented with a set of matched results.
+The AutoComplete widget is always instantiated with an html element. This element is expected to be an `input` element, as the user will type and be presented with a set of matched results. Other than the element, you will also want to set a threshold of character that must be typed before the Autocomplete will start fetching results. By default this is set at 2, but you can override that.
 
 Essentially your code will look like this:
 
 ```js
 new AutoComplete({
-  el: "#myInputElement" // required
-  threshold: 2 // how many letters must be typed before AutoComplete starts fetching
-
+  el: "#myInputElement",
+  threshold: 2,
   fetch: function(searchTerm, callback) {
-    Required
-    @param {searchTerm} string
-    @param {callback} function that accepts a {result} paramater
-    Returns callback, passing in an [Array] of strings or objects as the result
+
   },
   template: function(results) {
-    Required
-    @param {results} array of objects
-    Returns {string} of <li> items
+
   },
   onItem: function(el) {
-    Required
-    @param {object} DOM element that was selected
+
   }
 });
 ```
