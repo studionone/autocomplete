@@ -24,15 +24,18 @@ new AutoComplete({
     @param {object} DOM element that was selected
   }
 });
+```
 
 The DOM ends up looking like this:
 
+```
 <div class="autocomplete">
   <input id="whatever" />
   <div class="autocomplete__results">
     <ul>
       <li>result 1</li>
       <li class="autocomplete__results--highlight">result 2</li>
+      <li>result 3</li>
     </ul>
   </div>
 </div>
