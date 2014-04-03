@@ -1,7 +1,10 @@
 Autocomplete
 ============
 
-An autocomplete widget. Built to be as reusable as possible. Means a tiny bit more work for the instantiator, but hopefully flexible and simple enough to be used in different contexts. Clone this repository and open up index.html. You'll be presented with a sample of this autocomplete. It is running on local data, and should give you a good feel of what this autocomplete does. Tailor it to your needs and use it in your own project!
+An autocomplete widget. Built to be as reusable as possible. Means a tiny bit more work for the instantiator, but hopefully flexible and simple enough to be used in different contexts.
+
+
+Clone this repository. Run `npm install` and `bower install`. From the command line just run `grunt`. This will start up a server at `localhost:8000`, run jasmine tests. Navigate to /index.html and you'll be presented with a sample of this autocomplete (see screenshot). It is running on local data, and should give you a good feel of what this autocomplete does. Tailor it to your needs and use it in your own project!
 
 ![autocomplete](/autocomplete-example.png)
 
