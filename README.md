@@ -4,9 +4,12 @@ Autocomplete
 An autocomplete widget. Built to be as reusable as possible. Means a tiny bit more work for the instantiator, but hopefully flexible and simple enough to be used in different contexts.
 
 
-Clone this repository. Run `npm install` and `bower install`. From the command line just run `grunt`. This will start up a server at `localhost:8000`, run jasmine tests. Navigate to /index.html and you'll be presented with a sample of this autocomplete (see screenshot). It is running on local data, and should give you a good feel of what this autocomplete does. Tailor it to your needs and use it in your own project!
+Clone this repository. Run `npm install` and `bower install`. Then run `grunt`. This will start up a server at `localhost:8000` and will run jasmine tests. Navigate to /index.html and you'll be presented with a sample of this autocomplete (see screenshot). It is running on local data, and should give you a good feel of what this autocomplete does. Tailor it to your needs and use it in your own project!
 
 ![autocomplete](/autocomplete-example.png)
+
+## Dependencies
+* jQuery
 
 ## Usage
 The AutoComplete widget is always instantiated with an html element. This element is expected to be an `input` element, as the user will type and be presented with a set of matched results. Other than the element, you will also want to set a threshold of character that must be typed before the Autocomplete will start fetching results. By default this is set at 2, but you can override that.
