@@ -3,7 +3,7 @@ Autocomplete
 
 An autocomplete widget. Built to be as reusable as possible. Means a tiny bit more work for the instantiator, but hopefully flexible and simple enough to be used in different contexts.
 
-![autocomplete](https://raw.github.com/lonelyplanet/autocomplete/master/autocomplete-example.png)
+![autocomplete](/autocomplete-example.png)
 
 ## Usage
 The AutoComplete widget is always instantiated with an html element. This element is expected to be an `input` element, as the user will type and be presented with a set of matched results.
