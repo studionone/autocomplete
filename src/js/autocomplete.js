@@ -1,6 +1,4 @@
-/*global jQuery:false */
-
-(function($) {
+define([ "jquery" ], function($) {
 
   "use strict";
   var AutoComplete, methods;
@@ -251,4 +249,6 @@
     AutoComplete.prototype[attrname] = methods[attrname];
   }
 
-})(jQuery);
+  return AutoComplete;
+
+});

@@ -16,57 +16,7 @@
   <small>This form is a proof-of-concept for the autocomplete. It is searching through a JSON-formatted array of 100 objects that each contain a City, Country, and Company. It searches all three fields, and outputs the results in a custom display. 
 </div>
 
-<!-- Sample data -->
-<script type="text/javascript" src="src/js/data.js"></script>
-
-<!-- Dependencies -->
-<script type="text/javascript" src="bower_components/jquery/dist/jquery.js"></script>
-
-<!-- Plugin -->
-<script type="text/javascript" src="src/js/autocomplete.js"></script>
-
-<!-- Instantiate and Customize -->
-<script type="text/javascript">
-var customTemplate = function(results) {
-  var items = "",
-      r = results.length
-  for(var i = 0; i < r; i++) {
-    items += "<li data-company='" + results[i].Company + "'><strong>" + results[i].Company + "</strong><br/><small>" + results[i].City + ", " + results[i].Country + "</small></li>";
-  }
-  return items;
-};
-
-var customFetch = function(searchTerm, cb) {
-  var results = [],
-    searchTerm = searchTerm.toLowerCase();
-
-  for (var i = 0; i < data.length; i++) {
-    var matchesCountry = data[i].Country.toLowerCase().indexOf(searchTerm) != -1,
-        matchesCity = data[i].City.toLowerCase().indexOf(searchTerm) != -1,
-        matchesName = data[i].Company.toLowerCase().indexOf(searchTerm) != -1;
-    if(matchesCity || matchesCountry || matchesName) {
-      results.push(data[i]);
-    }
-  }
-  cb(results);
-  // setTimeout(function() {
-  //   cb(results);
-  // }, 1000);
-};
-
-var customOnItem = function(el) {
-  var company = $(el).attr("data-company");
-  $("#autocomplete1").val(company);
-}
-
-var x = new AutoComplete({
-  el: "#autocomplete1",
-  fetch: customFetch,
-  template: customTemplate,
-  onItem: customOnItem
-});
-
-</script>
+<script type="text/javascript" data-main="src/js/main" src="bower_components/requirejs/require.js"></script>
 
 </body>
 </html>

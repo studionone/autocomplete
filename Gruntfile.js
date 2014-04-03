@@ -1,48 +1,51 @@
 module.exports = function(grunt) {
 
-  "use strict";
-
-  // Project configuration.
   grunt.initConfig({
+
     pkg: grunt.file.readJSON("package.json"),
 
-    connect: {
-      server: {
+    jasmine: {
+      standard: {
+        src: "src/js/*.js",
         options: {
-          hostname: "127.0.0.1",
-          port: 8888
+          specs: "spec/tests/*.js",
+          vendor: "bower_components/jquery/dist/jquery.js"
+        }
+      },
+      amd: {
+        src: "src/js/*.js",
+        options: {
+          helpers: ["node_modules/jasmine-jquery/lib/jasmine-jquery.js", "bower_components/jquery/dist/jquery.js"],
+          specs: "spec/tests/*.js",
+          host: "http://127.0.0.1:8000",
+          template: require("grunt-template-jasmine-requirejs"),
+          templateOptions: {
+            requireConfig: {
+              baseUrl: "./",
+              paths: {
+                jquery: "./bower_components/jquery/dist/jquery"
+              }
+            }
+          }
         }
       }
     },
 
     watch: {
-      test: {
-        files: [ "src/js/*.js" ],
-        tasks: [ "connect", "jasmine" ]
-      }
-    },
-
-    jasmine: {
-      all: {
-        src: [ "src/js/*.js" ],
+      scripts: {
+        files: [ "Gruntfile.js", "src/js/*.js", "spec/tests/*.js" ],
+        tasks: [ "jasmine:amd" ],
         options: {
-          helpers: [ "spec/helpers/*.js", "bower_components/jquery/dist/jquery.js" ],
-          host: "http://127.0.0.1:8888/",
-          specs: "spec/tests/*.js"
+          nospawn: true
         }
       }
     },
 
-    jshint: {
-      src: [ "Gruntfile.js", "src/js/*.js", "!src/js/data.js" ],
-      options: {
-        jshintrc: "./.jshintrc"
-      }
-    },
-    jscs: {
-      src: [ "Gruntfile.js", "src/**/*.js", "!src/js/data.js" ],
-      options: {
-        config: "./.jscs.json"
+    connect: {
+      test: {
+        hostname: "http://127.0.0.1",
+        port: 8000,
+        keepalive: true
       }
     }
 
@@ -51,6 +54,6 @@ module.exports = function(grunt) {
   // This loads in all the grunt tasks auto-magically.
   require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
 
-  // Tasks
-  grunt.registerTask("default", [ "jshint", "jscs", "watch" ]);
+  grunt.registerTask("default", [ "connect", "watch" ]);
+
 };
