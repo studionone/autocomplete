@@ -15,7 +15,7 @@ module.exports = function(grunt) {
       amd: {
         src: "src/js/*.js",
         options: {
-          helpers: ["node_modules/jasmine-jquery/lib/jasmine-jquery.js", "bower_components/jquery/dist/jquery.js"],
+          helpers: [ "node_modules/jasmine-jquery/lib/jasmine-jquery.js", "bower_components/jquery/dist/jquery.js" ],
           specs: "spec/tests/*.js",
           host: "http://127.0.0.1:8000",
           template: require("grunt-template-jasmine-requirejs"),
