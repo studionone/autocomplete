@@ -4,6 +4,7 @@
   "authors": [
     "Ben Tedder <ben.tedder@lonelyplanet.com>"
   ],
+  "main": "src/js/autocomplete.js",
   "license": "MIT",
   "private": true,
   "ignore": [
