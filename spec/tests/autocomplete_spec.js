@@ -285,9 +285,10 @@ require([ "autocomplete" ], function(AutoComplete) {
     describe("Rendering results", function() {
 
       it("should return a string of <li>s inside a <ul>.", function() {
-        spyOn(tester.config, "template").andReturn("<li>test</li>");
+        tester.results = [{name: "Ben"}];
+        tester.config.template = "<li>{{name}}</li>";
         var list = tester.renderList();
-        expect(list).toEqual("<ul><li>test</li></ul>");
+        expect(list).toEqual("<ul><li>Ben</li></ul>");
       });
 
       it("calling populateResultPanel should fill the resultsID div.", function() {
