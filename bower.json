@@ -15,7 +15,9 @@
     "package.json",
     "README.md",
     "src/*",
-    "autocomplete-example.png"
+    "autocomplete-example.png",
+    "bower.json",
+    "Gruntfile.js"
 
   ],
   "dependencies": {
