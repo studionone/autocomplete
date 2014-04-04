@@ -6,7 +6,6 @@
   ],
   "main": "src/js/autocomplete.js",
   "license": "MIT",
-  "private": true,
   "ignore": [
     "**/.*",
     "node_modules",
