@@ -23,9 +23,7 @@ new AutoComplete({
   fetch: function(searchTerm, callback) {
 
   },
-  template: function(results) {
-
-  },
+  template: "<li>{{data}}"
   onItem: function(el) {
 
   }
@@ -46,7 +44,7 @@ Once `new AutoComplete` is instantiated, it changes the original `<input type="t
 </div>
 ```
 
-## fetch(), template(), and onItem() Explained
+## fetch(), template, and onItem() Explained
 There are three custom functions which must be passed to this widget for it to be useful. They are explained below.
 
 ### fetch()
@@ -92,27 +90,17 @@ var myFetch = function(searchTerm, callback) {
 };
 ```
 
-### template()
-The template function (todo: make easier), is sent the results as an array. This array can be iterated over and the result set is created. You must return an html string of `li` elements.
+### template
+The template should be a string. This string will need to be an `li` item. Any variables should be passed in with double curly braces. Underscore then compiles that template and feeds the variables in.
 
 **Example:**
 ```js
 new AutoComplete({
   ...
-  template: myTemplate,
+  template: "<li data-company='{{company}}'>{{company}} - {{city}}, {{country}}</li>",
   ...
 });
-
-var myTemplate = function(results) {
-  var listitems = "";
-  for(var i = 0, i < results.length; i++) {
-    listitems += "<li>" + results[i] + "</li>";
-  }
-  return listitems;
-}
 ```
-
-That was the most basic example. More likely you would have extra data-* attributes, maybe a formatted list item, etc. It's entirely up to the user how these list items should be displayed.
 
 ### onItem()
 Just as the first two functions basically give you full control of how the data is fetched, and how it is looked, this function gives you full control of what happens when a user **selects** a result in the autocomplete. The typical case is the input value is replaced by the value of the result. But sometimes you may want to do other things (set hidden variables in your form based on the data-id of the list item, navigate directly to a url, etc.).
