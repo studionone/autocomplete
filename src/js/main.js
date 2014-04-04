@@ -2,11 +2,15 @@ require.config({
   "paths": {
     "jquery": "/bower_components/jquery/dist/jquery",
     "data": "/src/js/data",
+    "underscore": "/bower_components/underscore/underscore",
     "autocomplete": "/src/js/autocomplete"
   },
   shim: {
     'jquery': {
       exports: '$'
+    },
+    'underscore': {
+      exports: '_'
     }
   }
 });
@@ -48,7 +52,7 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
   var x = new AutoComplete({
     el: "#autocomplete1",
     fetch: customFetch,
-    template: customTemplate,
+    template: "<li data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>",
     onItem: customOnItem
   });
 

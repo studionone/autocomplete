@@ -1,7 +1,11 @@
-define([ "jquery" ], function($) {
+define([ "jquery", "underscore" ], function($, _) {
 
   "use strict";
   var AutoComplete, methods;
+
+  _.templateSettings = {
+    interpolate: /\{\{(.+?)\}\}/g
+  };
 
   AutoComplete = function(args) {
 
@@ -9,7 +13,7 @@ define([ "jquery" ], function($) {
       el: "",
       threshold: 2,
       fetch: this.defaultFetch,
-      template: this.defaultTemplate,
+      template: "<li>Test</li>",
       onItem: this.defaultOnItem
     };
 
@@ -90,7 +94,7 @@ define([ "jquery" ], function($) {
 
     renderList: function() {
       var list = "<ul>";
-      list += this.config.template(this.results);
+      list += this.processTemplate(this.results);
       list += "</ul>";
       return list;
     },
@@ -129,7 +133,8 @@ define([ "jquery" ], function($) {
         _this.processTyping(e);
       });
 
-      this.$resultsPanel.on("click", "li", function(e) {
+      this.$resultsPanel.on("click", "ul li", function(e) {
+        console.log(e);
         _this.config.onItem(e.target);
         _this.clearResults();
       });
@@ -210,22 +215,14 @@ define([ "jquery" ], function($) {
     },
 
     // These three templates are the defaults that a user would override
-    defaultTemplate: function(results) {
+    processTemplate: function(results) {
       var i,
           listLength = results.length,
           listItem = "",
           listItems = "";
       // should return an HTML string of list items
       for (i = 0; i < listLength; i++) {
-        listItem = "<li id='item" + i + "' data-name='" + results[i].n + "'>";
-        // iterate through each property in the object (ugly on purpose for end user)
-        for (var p in results[i]) {
-          if (results[i].hasOwnProperty(p)) {
-            listItem += p + ":" + results[i][p] + " - ";
-          }
-        }
-        listItem += "</li>";
-
+        listItem = _.template(this.config.template, results[i]);
         // append newly formed list item to other list items
         listItems += listItem;
       }
@@ -252,3 +249,5 @@ define([ "jquery" ], function($) {
   return AutoComplete;
 
 });
+
+
