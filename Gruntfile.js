@@ -47,6 +47,13 @@ module.exports = function(grunt) {
         port: 8000,
         keepalive: true
       }
+    },
+
+    copy: {
+      main: {
+        src: "src/js/autocomplete.js",
+        dest: "dist/autocomplete.js"
+      }
     }
 
   });

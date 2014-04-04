@@ -10,8 +10,13 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
-    "tests"
+    "spec",
+    "index.html",
+    "package.json",
+    "README.md",
+    "src/*",
+    "autocomplete-example.png"
+
   ],
   "dependencies": {
     "jquery": "~2.1.0",
