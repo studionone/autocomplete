@@ -14,7 +14,7 @@
     "index.html",
     "package.json",
     "README.md",
-    "src/*",
+    "src",
     "autocomplete-example.png",
     "bower.json",
     "Gruntfile.js"
