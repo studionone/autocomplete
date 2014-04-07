@@ -72,7 +72,7 @@ module.exports = function(grunt) {
         tagName: "v%VERSION%",
         tagMessage: "Version %VERSION%",
         push: true,
-        pushTo: "master",
+        pushTo: "origin master",
         gitDescribeOptions: "--tags" // options to use with "$ git describe"
       }
     }
