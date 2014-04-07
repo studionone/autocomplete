@@ -1,6 +1,6 @@
 {
-  "name": "LP AutoComplete",
-  "version": "0.0.0",
+  "name": "AutoComplete",
+  "version": "0.0.1",
   "authors": [
     "Ben Tedder <ben.tedder@lonelyplanet.com>"
   ],
@@ -21,7 +21,7 @@
 
   ],
   "dependencies": {
-    "jquery": "~2.1.0",
+    "jquery": "~1.11.0",
     "requirejs": "~2.1.11"
   },
   "repository": {

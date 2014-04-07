@@ -1,11 +1,7 @@
-define([ "jquery", "underscore" ], function($, _) {
+define([ "jquery" ], function($) {
 
   "use strict";
   var AutoComplete, methods;
-
-  _.templateSettings = {
-    interpolate: /\{\{(.+?)\}\}/g
-  };
 
   AutoComplete = function(args) {
 
@@ -222,11 +218,18 @@ define([ "jquery", "underscore" ], function($, _) {
           listItems = "";
       // should return an HTML string of list items
       for (i = 0; i < listLength; i++) {
-        listItem = _.template(this.config.template, results[i]);
+        listItem = this.renderTemplate(this.config.template, results[i]);
         // append newly formed list item to other list items
         listItems += listItem;
       }
       return listItems;
+    },
+
+    renderTemplate: function(template, obj) {
+      for (var key in obj) {
+        template = template.replace(new RegExp("{{" + key + "}}", "gm"), obj[key]);
+      }
+      return template;
     },
 
     defaultOnItem: function(el) {

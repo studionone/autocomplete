@@ -2,29 +2,25 @@ require.config({
   "paths": {
     "jquery": "/bower_components/jquery/dist/jquery",
     "data": "/src/js/data",
-    "underscore": "/bower_components/underscore/underscore",
     "autocomplete": "/src/js/autocomplete"
   },
   shim: {
     'jquery': {
       exports: '$'
-    },
-    'underscore': {
-      exports: '_'
     }
   }
 });
 
 require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
 
-  var customTemplate = function(results) {
-    var items = "",
-        r = results.length
-    for(var i = 0; i < r; i++) {
-      items += "<li data-company='" + results[i].Company + "'><strong>" + results[i].Company + "</strong><br/><small>" + results[i].City + ", " + results[i].Country + "</small></li>";
-    }
-    return items;
-  };
+  // var customTemplate = function(results) {
+  //   var items = "",
+  //       r = results.length
+  //   for(var i = 0; i < r; i++) {
+  //     items += "<li data-company='" + results[i].Company + "'><strong>" + results[i].Company + "</strong><br/><small>" + results[i].City + ", " + results[i].Country + "</small></li>";
+  //   }
+  //   return items;
+  // };
 
   var customFetch = function(searchTerm, cb) {
     var results = [],

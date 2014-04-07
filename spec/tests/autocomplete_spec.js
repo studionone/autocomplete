@@ -221,58 +221,6 @@ require([ "autocomplete" ], function(AutoComplete) {
 
     describe("The fetching of results", function() {
 
-      // Trying to implement AJAX testing...hmmm.
-
-      // it("should call the config.fetch method to fetch results.", function() {
-      //   tester.config.threshold = 2;
-      //   spyOn(tester.config, "fetch").andCallThrough();
-      //   tester.callFetch("fra");
-      //   expect(tester.config.fetch).toHaveBeenCalled();
-      // });
-
-
-      // it("should return an array when fetching.", function() {
-      //   spyOn(tester.config, "fetch").andCallThrough();
-      //   var result = tester.callFetch("fra"),
-      //       isArray = false;
-      //   if ( Object.prototype.toString.call( result ) === "[object Array]" ) {
-      //     isArray = true;
-      //   }
-      //   //expect(isArray).toBeTruthy();
-      // });
-
-      // it("should set the global results array.", function() {
-      //   tester.config.fetch = function(searchTerm, cb) {
-      //     setTimeout(function() {
-      //       cb([ 1,2,3 ]);
-      //     }, 500);
-      //   };
-
-      //   function setResults(results) {
-      //     tester.results = results
-      //   }
-
-      //   spyOn(tester.config, "fetch");
-
-      //   runs(function() {
-      //     tester.config.fetch("hi", function(results) {
-      //       setResults(results);
-      //     });
-      //   });
-
-      //   waits(1000);
-
-      //   runs(function() {
-      //     expect(tester.config.fetch).toHaveBeenCalled();
-      //     expect(setResults).toHaveBeenCalled();
-      //     expect(tester.results).toEqual([ 1,2,3 ]);
-      //   });
-
-      //   // spyOn(tester.config, "fetch").andReturn([ 1,2,3 ]);
-      //   // var results = tester.callFetch("fra");
-      //   // expect(tester.results).toEqual([ 1,2,3 ]);
-      // });
-
       it("shouldn't change the global result set if nothing returned.", function() {
         tester.results = [1];
         spyOn(tester.config, "fetch").andReturn([]);
@@ -342,8 +290,6 @@ require([ "autocomplete" ], function(AutoComplete) {
         var changed = tester.changeIndex("up");
         expect(changed).toBeFalsy();
       });
-
-      // need a test for .highlight class being added/removed
 
     });
 

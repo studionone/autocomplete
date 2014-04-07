@@ -23,15 +23,11 @@ module.exports = function(grunt) {
             requireConfig: {
               baseUrl: "./",
               paths: {
-                jquery: "./bower_components/jquery/dist/jquery",
-                underscore: "./bower_components/underscore/underscore"
+                jquery: "./bower_components/jquery/dist/jquery"
               },
               shim: {
                 'jquery': {
                   exports: '$'
-                },
-                'underscore': {
-                  exports: '_'
                 }
               }
             }
