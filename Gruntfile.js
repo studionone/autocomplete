@@ -26,8 +26,8 @@ module.exports = function(grunt) {
                 jquery: "./bower_components/jquery/dist/jquery"
               },
               shim: {
-                'jquery': {
-                  exports: '$'
+                "jquery": {
+                  exports: "$"
                 }
               }
             }
@@ -58,6 +58,22 @@ module.exports = function(grunt) {
       main: {
         src: "src/js/autocomplete.js",
         dest: "dist/autocomplete.js"
+      }
+    },
+
+    bump: {
+      options: {
+        files: [ "package.json" ],
+        updateConfigs: [],
+        commit: true,
+        commitMessage:  "Release v%VERSION%",
+        commitFiles: [ "package.json" ], // "-a" for all files
+        createTag: true,
+        tagName: "v%VERSION%",
+        tagMessage: "Version %VERSION%",
+        push: true,
+        pushTo: "master",
+        gitDescribeOptions: "--tags --always --abbrev=1 --dirty=-d" // options to use with "$ git describe"
       }
     }
 
