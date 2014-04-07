@@ -23,7 +23,7 @@ new AutoComplete({
   fetch: function(searchTerm, callback) {
 
   },
-  template: "<li>{{data}}"
+  template: "<li>{{name}}</li>"
   onItem: function(el) {
 
   }
@@ -91,7 +91,7 @@ var myFetch = function(searchTerm, callback) {
 ```
 
 ### template
-The template should be a string. This string will need to be an `li` item. Any variables should be passed in with double curly braces. Underscore then compiles that template and feeds the variables in.
+The template should be a string. This string will need to be an `li` item. Any variables should be passed in with double curly braces. The template is then compiled, replacing variables with real data as the result set is looped through.
 
 **Example:**
 ```js
