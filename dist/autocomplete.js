@@ -10,8 +10,8 @@ define([ "jquery" ], function($) {
       threshold: 2,
       fetch: this.defaultFetch,
       template: {
-        container: "<ul>{{items}}</ul>",
-        item: "<li>Test</li>"
+        resultsContainer: "<ul>{{items}}</ul>",
+        resultsItem: "<li>Test</li>"
       },
       css: {
         hidden: "is-hidden",
@@ -34,7 +34,7 @@ define([ "jquery" ], function($) {
         13: "enter",
         38: "up",
         40: "down"
-      },
+      }
     };
 
     $.extend(this, props);
@@ -65,9 +65,6 @@ define([ "jquery" ], function($) {
       // http://jsperf.com/find-sibling-vs-find-wrapper-child
       this.$resultsPanel = this.$el.next();
 
-      var w = this.$el.outerWidth(),
-          h = this.$el.outerHeight();
-      this.$resultsPanel.css({ top: h + "px", width: w + "px" });
     },
 
     showResultsPanel: function() {
@@ -101,7 +98,7 @@ define([ "jquery" ], function($) {
 
     renderList: function() {
       var container =
-            $(this.config.template.container)
+            $(this.config.template.resultsContainer)
             .addClass(this.config.css.resultsContainer)[0]
             .outerHTML,
           items = this.processTemplate(this.results);
@@ -144,7 +141,7 @@ define([ "jquery" ], function($) {
       });
 
       this.$resultsPanel.on("click", "." + this.config.css.resultsItem, function(e) {
-        _this.config.onItem(e.target);
+        _this.config.onItem(this);
         _this.clearResults();
       });
 
@@ -213,7 +210,8 @@ define([ "jquery" ], function($) {
       this.$resultsPanel.find("." + this.config.css.resultsItem)
         .removeClass(this.config.css.resultsItemHighlight)
         .eq(this.resultIndex)
-        .addClass(this.config.css.resultsItemHighlight);
+        .addClass(this.config.css.resultsItemHighlight)[0]
+        .scrollIntoView();
     },
 
     selectResult: function() {
@@ -231,7 +229,7 @@ define([ "jquery" ], function($) {
           listItems = "";
       // should return an HTML string of list items
       for (i = 0; i < listLength; i++) {
-        listItem = this.renderTemplate(this.config.template.item, results[i]);
+        listItem = this.renderTemplate(this.config.template.resultsItem, results[i]);
         // append newly formed list item to other list items
         listItems += $(listItem).addClass(this.config.css.resultsItem)[0].outerHTML;
       }

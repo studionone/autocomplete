@@ -17,13 +17,21 @@ h1 {
 .is-hidden {
   display: none;
 }
+.autocomplete {
+}
 .autocomplete__results {
-  border: 1px solid #ccc;
-  max-height: 200px;
-  overflow-y: scroll;
+  position: relative;
 }
 .autocomplete__results--container {
   list-style: none;
+  border: 1px solid #ccc;
+  background: white;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: scroll;
   margin: 0px;
   padding: 0px;
 }

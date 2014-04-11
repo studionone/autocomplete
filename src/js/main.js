@@ -49,8 +49,8 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
     el: "#autocomplete1",
     fetch: customFetch,
     template: {
-      container: "<ul>{{items}}</ul>",
-      item: "<li data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>"
+      resultsContainer: "<ul>{{items}}</ul>",
+      resultsItem: "<li data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>"
     },
     css: {
       hidden: "is-hidden",
