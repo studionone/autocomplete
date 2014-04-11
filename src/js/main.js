@@ -23,8 +23,8 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
   // };
 
   var customFetch = function(searchTerm, cb) {
-    var results = [],
-      searchTerm = searchTerm.toLowerCase();
+    var results = [];
+    searchTerm = searchTerm.toLowerCase();
 
     for (var i = 0; i < data.length; i++) {
       var matchesCountry = data[i].Country.toLowerCase().indexOf(searchTerm) != -1,
@@ -43,12 +43,23 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
   var customOnItem = function(el) {
     var company = $(el).attr("data-company");
     $("#autocomplete1").val(company);
-  }
+  };
 
   var x = new AutoComplete({
     el: "#autocomplete1",
     fetch: customFetch,
-    template: "<li data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>",
+    template: {
+      container: "<ul>{{items}}</ul>",
+      item: "<li data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>"
+    },
+    css: {
+      hidden: "is-hidden",
+      elementWrapper: "autocomplete",
+      resultsWrapper: "autocomplete__results",
+      resultsContainer: "autocomplete__results--container",
+      resultsItem: "autocomplete__results--item",
+      resultsItemHighlight: "autocomplete__results--item--highlight"
+    },
     onItem: customOnItem
   });
 

@@ -9,8 +9,19 @@ define([ "jquery" ], function($) {
       el: "",
       threshold: 2,
       fetch: this.defaultFetch,
-      template: "<li>Test</li>",
-      onItem: this.defaultOnItem
+      template: {
+        container: "<ul>{{items}}</ul>",
+        item: "<li>Test</li>"
+      },
+      css: {
+        hidden: "is-hidden",
+        elementWrapper: "autocomplete",
+        resultsWrapper: "autocomplete__results",
+        resultsContainer: "autocomplete__results--container",
+        resultsItem: "autocomplete__results--item",
+        resultsItemHighlight: "autocomplete__results--item--highlight"
+      },
+     onItem: this.defaultOnItem
     };
 
     var props = {
@@ -23,7 +34,7 @@ define([ "jquery" ], function($) {
         13: "enter",
         38: "up",
         40: "down"
-      }
+      },
     };
 
     $.extend(this, props);
@@ -46,10 +57,10 @@ define([ "jquery" ], function($) {
 
     wrapEl: function() {
       this.$el
-        .wrap("<div class='autocomplete clearfix' />")
-        .after("<div class='is-hidden autocomplete__results' />");
+        .wrap("<div class='" + this.config.css.elementWrapper + "' />")
+        .after("<div class='" + this.config.css.hidden + " " + this.config.css.resultsWrapper + "' />");
 
-      this.$wrapper = this.$el.parent(".autocomplete");
+      this.$wrapper = this.$el.parent("." + this.config.css.elementWrapper);
 
       // http://jsperf.com/find-sibling-vs-find-wrapper-child
       this.$resultsPanel = this.$el.next();
@@ -60,13 +71,13 @@ define([ "jquery" ], function($) {
     },
 
     showResultsPanel: function() {
-      this.$resultsPanel.removeClass("is-hidden");
+      this.$resultsPanel.removeClass(this.config.css.hidden);
       this.displayed = true;
       this.highlightResult();
     },
 
     hideResultsPanel: function() {
-      this.$resultsPanel.addClass("is-hidden");
+      this.$resultsPanel.addClass(this.config.css.hidden);
       this.displayed = false;
     },
 
@@ -89,10 +100,12 @@ define([ "jquery" ], function($) {
     },
 
     renderList: function() {
-      var list = "<ul>";
-      list += this.processTemplate(this.results);
-      list += "</ul>";
-      return list;
+      var container =
+            $(this.config.template.container)
+            .addClass(this.config.css.resultsContainer)[0]
+            .outerHTML,
+          items = this.processTemplate(this.results);
+      return container.replace("{{items}}", items);
     },
 
     populateResultPanel: function() {
@@ -123,14 +136,14 @@ define([ "jquery" ], function($) {
         if(e.which === 13) {
           e.preventDefault();
           return false;
-        }
+        };
       });
+      
       this.$wrapper.on("keyup", function(e) {
         _this.processTyping(e);
       });
 
-      this.$resultsPanel.on("click", "ul li", function(e) {
-        console.log(e);
+      this.$resultsPanel.on("click", "." + this.config.css.resultsItem, function(e) {
         _this.config.onItem(e.target);
         _this.clearResults();
       });
@@ -197,15 +210,15 @@ define([ "jquery" ], function($) {
 
     highlightResult: function() {
       // highlight result by adding/removing class
-      this.$resultsPanel.find("li")
-        .removeClass("autocomplete__results--highlight")
+      this.$resultsPanel.find("." + this.config.css.resultsItem)
+        .removeClass(this.config.css.resultsItemHighlight)
         .eq(this.resultIndex)
-        .addClass("autocomplete__results--highlight");
+        .addClass(this.config.css.resultsItemHighlight);
     },
 
     selectResult: function() {
       // pass actual DOM element to onItem()
-      var el = this.$resultsPanel.find("li")[this.resultIndex];
+      var el = this.$resultsPanel.find("." + this.config.css.resultsItem)[this.resultIndex];
       this.config.onItem(el);
       this.clearResults();
     },
@@ -218,9 +231,9 @@ define([ "jquery" ], function($) {
           listItems = "";
       // should return an HTML string of list items
       for (i = 0; i < listLength; i++) {
-        listItem = this.renderTemplate(this.config.template, results[i]);
+        listItem = this.renderTemplate(this.config.template.item, results[i]);
         // append newly formed list item to other list items
-        listItems += listItem;
+        listItems += $(listItem).addClass(this.config.css.resultsItem)[0].outerHTML;
       }
       return listItems;
     },
