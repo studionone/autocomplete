@@ -145,7 +145,7 @@ define([ "jquery" ], function($) {
       });
 
       this.$el.on("blur", function() {
-        if (!_this.displayed) {
+        if (!this.displayed) {
           _this.clearResults();
         }
       });
