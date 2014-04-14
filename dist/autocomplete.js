@@ -145,7 +145,7 @@ define([ "jquery" ], function($) {
       });
 
       this.$el.on("blur", function() {
-        if (!_this.displayed) {
+        if (!this.displayed) {
           _this.clearResults();
         }
       });
@@ -206,11 +206,11 @@ define([ "jquery" ], function($) {
 
     highlightResult: function() {
       // highlight result by adding/removing class
-      this.$resultsPanel.find("." + this.config.css.resultsItem.split(" ")[0])
-        .removeClass(this.config.css.resultsItemHighlight)
+      var results = this.$resultsPanel.find("." + this.config.css.resultsItem.split(" ")[0]);
+      results.removeClass(this.config.css.resultsItemHighlight)
         .eq(this.resultIndex)
         .addClass(this.config.css.resultsItemHighlight)[0]
-        .scrollIntoView();
+        .scrollIntoView(false);
     },
 
     selectResult: function() {
