@@ -58,13 +58,12 @@ define([ "jquery" ], function($) {
     wrapEl: function() {
       this.$el
         .wrap("<div class='" + this.config.css.elementWrapper + "' />")
-        .after("<div class='" + this.config.css.hidden + " " + this.config.css.resultsWrapper + "' />");
+        .after("<div class='" + this.config.css.resultsWrapper + " " + this.config.css.hidden + "' />");
 
-      this.$wrapper = this.$el.parent("." + this.config.css.elementWrapper);
+      this.$wrapper = this.$el.parent();
 
       // http://jsperf.com/find-sibling-vs-find-wrapper-child
       this.$resultsPanel = this.$el.next();
-
     },
 
     showResultsPanel: function() {
@@ -140,7 +139,7 @@ define([ "jquery" ], function($) {
         _this.processTyping(e);
       });
 
-      this.$resultsPanel.on("click", "." + this.config.css.resultsItem, function(e) {
+      this.$resultsPanel.on("click", "." + this.config.css.resultsItem.split(" ")[0], function(e) {
         _this.config.onItem(this);
         _this.clearResults();
       });
@@ -207,7 +206,7 @@ define([ "jquery" ], function($) {
 
     highlightResult: function() {
       // highlight result by adding/removing class
-      this.$resultsPanel.find("." + this.config.css.resultsItem)
+      this.$resultsPanel.find("." + this.config.css.resultsItem.split(" ")[0])
         .removeClass(this.config.css.resultsItemHighlight)
         .eq(this.resultIndex)
         .addClass(this.config.css.resultsItemHighlight)[0]
@@ -216,7 +215,7 @@ define([ "jquery" ], function($) {
 
     selectResult: function() {
       // pass actual DOM element to onItem()
-      var el = this.$resultsPanel.find("." + this.config.css.resultsItem)[this.resultIndex];
+      var el = this.$resultsPanel.find("." + this.config.css.resultsItem.split(" ")[0])[this.resultIndex];
       this.config.onItem(el);
       this.clearResults();
     },

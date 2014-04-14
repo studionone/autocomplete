@@ -49,16 +49,19 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
     el: "#autocomplete1",
     fetch: customFetch,
     template: {
+      // Custom html tags are supported. Appearance is based on custom css classes (see below).
       resultsContainer: "<ul>{{items}}</ul>",
       resultsItem: "<li data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>"
     },
     css: {
+      // Multiple classes per element are supported, but the first one will always be an element reference.
+      // Every element needs to have at least 1 unique class defined for plugin to work (!)
       hidden: "is-hidden",
       elementWrapper: "autocomplete",
       resultsWrapper: "autocomplete__results",
-      resultsContainer: "autocomplete__results--container",
-      resultsItem: "autocomplete__results--item",
-      resultsItemHighlight: "autocomplete__results--item--highlight"
+      resultsContainer: "autocomplete__results__content",
+      resultsItem: "autocomplete__results__item",
+      resultsItemHighlight: "autocomplete__results__item--highlight"
     },
     onItem: customOnItem
   });

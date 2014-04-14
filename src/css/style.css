@@ -22,7 +22,7 @@ h1 {
 .autocomplete__results {
   position: relative;
 }
-.autocomplete__results--container {
+.autocomplete__results__content {
   list-style: none;
   border: 1px solid #ccc;
   background: white;
@@ -35,16 +35,16 @@ h1 {
   margin: 0px;
   padding: 0px;
 }
-.autocomplete__results--item {
+.autocomplete__results__item {
   cursor: pointer;
   border-bottom: 1px solid #ccc;
   padding: 3px;
   font-size: 0.8em;
 }
-.autocomplete__results--item:last-child {
+.autocomplete__results__item:last-child {
   border: 0px;
 }
-.autocomplete__results--item:hover,
-.autocomplete__results--item--highlight {
+.autocomplete__results__item:hover,
+.autocomplete__results__item--highlight {
   background: #efefef;
 }
