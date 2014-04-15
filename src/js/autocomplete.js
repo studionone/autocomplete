@@ -10,18 +10,14 @@ define([ "jquery" ], function($) {
       threshold: 2,
       fetch: this.defaultFetch,
       template: {
-        resultsContainer: "<ul>{{items}}</ul>",
-        resultsItem: "<li>Test</li>"
+        elementWrapper: "<div class='autocomplete'></div>",
+        resultsWrapper: "<div class='autocomplete__results__wrapper'</div>",
+        resultsContainer: "<ul class='autocomplete__results__container'></ul>",
+        resultsItem: "<li class='autocomplete__results__item' data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>",
+        resultsItemHighlightClass: "autocomplete__results__item--highlight",
+        hiddenClass: "is-hidden"
       },
-      css: {
-        hidden: "is-hidden",
-        elementWrapper: "autocomplete",
-        resultsWrapper: "autocomplete__results",
-        resultsContainer: "autocomplete__results--container",
-        resultsItem: "autocomplete__results--item",
-        resultsItemHighlight: "autocomplete__results--item--highlight"
-      },
-     onItem: this.defaultOnItem
+      onItem: this.defaultOnItem
     };
 
     var props = {
@@ -42,7 +38,8 @@ define([ "jquery" ], function($) {
 
     // cache references to dom elements used
     this.$el = $(this.config.el);
-
+    this.$resultsItemList = $();
+    
     this.init();
 
   };
@@ -57,23 +54,21 @@ define([ "jquery" ], function($) {
 
     wrapEl: function() {
       this.$el
-        .wrap("<div class='" + this.config.css.elementWrapper + "' />")
-        .after("<div class='" + this.config.css.resultsWrapper + " " + this.config.css.hidden + "' />");
-
+        .wrap(this.config.template.elementWrapper)
+        .after($(this.config.template.resultsWrapper).addClass(this.config.template.hiddenClass));
       this.$wrapper = this.$el.parent();
-
       // http://jsperf.com/find-sibling-vs-find-wrapper-child
       this.$resultsPanel = this.$el.next();
     },
-
+    
     showResultsPanel: function() {
-      this.$resultsPanel.removeClass(this.config.css.hidden);
+      this.$resultsPanel.removeClass(this.config.template.hiddenClass);
       this.displayed = true;
       this.highlightResult();
     },
 
     hideResultsPanel: function() {
-      this.$resultsPanel.addClass(this.config.css.hidden);
+      this.$resultsPanel.addClass(this.config.template.hiddenClass);
       this.displayed = false;
     },
 
@@ -96,17 +91,15 @@ define([ "jquery" ], function($) {
     },
 
     renderList: function() {
-      var container =
-            $(this.config.template.resultsContainer)
-            .addClass(this.config.css.resultsContainer)[0]
-            .outerHTML,
-          items = this.processTemplate(this.results);
-      return container.replace("{{items}}", items);
+      var $container = $(this.config.template.resultsContainer);
+      this.$resultsItemList = $(this.processTemplate(this.results));
+
+      return $container.append(this.$resultsItemList);
     },
 
     populateResultPanel: function() {
-      var resultString = this.renderList();
-      this.$resultsPanel.html(resultString);
+      var $results = this.renderList();
+      this.$resultsPanel.append($results);
       this.showResultsPanel();
     },
 
@@ -132,20 +125,21 @@ define([ "jquery" ], function($) {
         if(e.which === 13) {
           e.preventDefault();
           return false;
-        };
+        }
       });
 
       this.$wrapper.on("keyup", function(e) {
         _this.processTyping(e);
       });
 
-      this.$resultsPanel.on("click", "." + this.config.css.resultsItem.split(" ")[0], function(e) {
+      // 'blur' fires before 'click' so we have to use 'mousedown'
+      this.$resultsPanel.on("mousedown", "." + $(this.config.template.resultsItem)[0].className, function(e) {
         _this.config.onItem(this);
         _this.clearResults();
       });
 
       this.$el.on("blur", function() {
-        if (!this.displayed) {
+        if (!_this.visible) {
           _this.clearResults();
         }
       });
@@ -178,25 +172,25 @@ define([ "jquery" ], function($) {
     processSpecialKey: function(keyName, e) {
       var changed = false;
       switch (keyName) {
-        case "up": {
-          changed = this.changeIndex("up");
-          break;
-        }
-        case "down": {
-          changed = this.changeIndex("down");
-          break;
-        }
-        case "enter": {
-          this.selectResult();
-          break;
-        }
-        case "esc": {
-          this.clearResults();
-          break;
-        }
-        default: {
-          break;
-        }
+      case "up": {
+        changed = this.changeIndex("up");
+        break;
+      }
+      case "down": {
+        changed = this.changeIndex("down");
+        break;
+      }
+      case "enter": {
+        this.selectResult();
+        break;
+      }
+      case "esc": {
+        this.clearResults();
+        break;
+      }
+      default: {
+        break;
+      }
       }
 
       if (changed) {
@@ -206,31 +200,29 @@ define([ "jquery" ], function($) {
 
     highlightResult: function() {
       // highlight result by adding/removing class
-      var results = this.$resultsPanel.find("." + this.config.css.resultsItem.split(" ")[0]);
-      results.removeClass(this.config.css.resultsItemHighlight)
+      this.$resultsItemList
+        .removeClass(this.config.template.resultsItemHighlightClass)
         .eq(this.resultIndex)
-        .addClass(this.config.css.resultsItemHighlight)[0]
-        .scrollIntoView(false);
+        .addClass(this.config.template.resultsItemHighlightClass);
     },
 
     selectResult: function() {
       // pass actual DOM element to onItem()
-      var el = this.$resultsPanel.find("." + this.config.css.resultsItem.split(" ")[0])[this.resultIndex];
+      var el = this.$resultsItemList[this.resultIndex];
       this.config.onItem(el);
       this.clearResults();
     },
 
     // These three templates are the defaults that a user would override
     processTemplate: function(results) {
-      var i,
-          listLength = results.length,
+      var listLength = results.length,
           listItem = "",
           listItems = "";
       // should return an HTML string of list items
-      for (i = 0; i < listLength; i++) {
+      for (var i = 0; i < listLength; i++) {
         listItem = this.renderTemplate(this.config.template.resultsItem, results[i]);
         // append newly formed list item to other list items
-        listItems += $(listItem).addClass(this.config.css.resultsItem)[0].outerHTML;
+        listItems += listItem;
       }
       return listItems;
     },

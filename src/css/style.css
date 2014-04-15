@@ -19,10 +19,10 @@ h1 {
 }
 .autocomplete {
 }
-.autocomplete__results {
+.autocomplete__results__wrapper {
   position: relative;
 }
-.autocomplete__results__content {
+.autocomplete__results__container {
   list-style: none;
   border: 1px solid #ccc;
   background: white;
@@ -30,8 +30,6 @@ h1 {
   top: 0px;
   left: 0px;
   width: 100%;
-  max-height: 200px;
-  overflow-y: scroll;
   margin: 0px;
   padding: 0px;
 }
