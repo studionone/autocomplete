@@ -13,18 +13,8 @@ require.config({
 
 require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
 
-  // var customTemplate = function(results) {
-  //   var items = "",
-  //       r = results.length
-  //   for(var i = 0; i < r; i++) {
-  //     items += "<li data-company='" + results[i].Company + "'><strong>" + results[i].Company + "</strong><br/><small>" + results[i].City + ", " + results[i].Country + "</small></li>";
-  //   }
-  //   return items;
-  // };
-
   var customFetch = function(searchTerm, cb) {
     var results = [],
-        limit = 4;
     searchTerm = searchTerm.toLowerCase();
 
     for (var i = 0; i < data.length; i++) {
@@ -35,12 +25,8 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
         results.push(data[i]);
       }
     }
-    // Limit results
-    results = results.length > limit ? results.slice(0, limit) : results;
     cb(results);
-    // setTimeout(function() {
-    //   cb(results);
-    // }, 1000);
+
   };
 
   var customOnItem = function(el) {
@@ -51,6 +37,8 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
   var x = new AutoComplete({
     el: "#autocomplete1",
     fetch: customFetch,
+    limit: 5,
+    threshold: 0,
     template: {
       // Custom html tags are supported.
       // Multiple classes per element are supported, but the first one will always be an element reference.

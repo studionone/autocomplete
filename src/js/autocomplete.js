@@ -8,6 +8,7 @@ define([ "jquery" ], function($) {
     this.config = {
       el: "",
       threshold: 2,
+      limit: 0,
       fetch: this.defaultFetch,
       template: {
         elementWrapper: "<div class='autocomplete'></div>",
@@ -55,7 +56,8 @@ define([ "jquery" ], function($) {
     wrapEl: function() {
       this.$el
         .wrap(this.config.template.elementWrapper)
-        .after($(this.config.template.resultsWrapper).addClass(this.config.template.hiddenClass));
+        .after($(this.config.template.resultsWrapper)
+          .addClass(this.config.template.hiddenClass));
       this.$wrapper = this.$el.parent();
       // http://jsperf.com/find-sibling-vs-find-wrapper-child
       this.$resultsPanel = this.$el.next();
@@ -82,7 +84,9 @@ define([ "jquery" ], function($) {
       var _this = this;
       this.config.fetch(searchTerm, function(results) {
         if (results.length > 0) {
-          _this.results = results;
+          // Limit results
+          _this.results = results.length > _this.config.limit ? results.slice(0, _this.config.limit) : results;
+
           cb();
         } else {
           _this.clearResults();
@@ -93,7 +97,6 @@ define([ "jquery" ], function($) {
     renderList: function() {
       var $container = $(this.config.template.resultsContainer);
       this.$resultsItemList = $(this.processTemplate(this.results));
-
       return $container.html(this.$resultsItemList);
     },
 
