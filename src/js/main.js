@@ -22,8 +22,9 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
   //   return items;
   // };
 
-  var customFetch = function(searchTerm, limit, cb) {
-    var results = [];
+  var customFetch = function(searchTerm, cb) {
+    var results = [],
+        limit = 4;
     searchTerm = searchTerm.toLowerCase();
 
     for (var i = 0; i < data.length; i++) {
@@ -34,9 +35,8 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
         results.push(data[i]);
       }
     }
-    if (limit) {
-      results = results.length > limit ? results.slice(0, limit) : results;
-    }
+    // Limit results
+    results = results.length > limit ? results.slice(0, limit) : results;
     cb(results);
     // setTimeout(function() {
     //   cb(results);
