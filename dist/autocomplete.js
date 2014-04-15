@@ -94,12 +94,12 @@ define([ "jquery" ], function($) {
       var $container = $(this.config.template.resultsContainer);
       this.$resultsItemList = $(this.processTemplate(this.results));
 
-      return $container.append(this.$resultsItemList);
+      return $container.html(this.$resultsItemList);
     },
 
     populateResultPanel: function() {
       var $results = this.renderList();
-      this.$resultsPanel.append($results);
+      this.$resultsPanel.html($results);
       this.showResultsPanel();
     },
 
