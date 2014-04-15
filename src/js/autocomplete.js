@@ -11,7 +11,7 @@ define([ "jquery" ], function($) {
       fetch: this.defaultFetch,
       template: {
         elementWrapper: "<div class='autocomplete'></div>",
-        resultsWrapper: "<div class='autocomplete__results__wrapper'</div>",
+        resultsWrapper: "<div class='autocomplete__results__wrapper'></div>",
         resultsContainer: "<ul class='autocomplete__results__container'></ul>",
         resultsItem: "<li class='autocomplete__results__item' data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>",
         resultsItemHighlightClass: "autocomplete__results__item--highlight",
