@@ -45,7 +45,7 @@ require([ "autocomplete" ], function(AutoComplete) {
 
       it("should be wrapped in a div with the passed ID.", function() {
         var el = tester.$el;
-        expect(el.parent(".autocomplete")).toExist();
+        expect(el.parent(".js-autocomplete")).toExist();
       });
 
       it("should have a HIDDEN results div directly after it.", function() {

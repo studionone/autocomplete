@@ -9,14 +9,14 @@ define([ "jquery" ], function($) {
       el: "",
       threshold: 0,
       limit: 0,
-      data: this.defaultFetch(),
+      fetch: this.defaultFetch,
       searchFields: [],
       template: {
         elementWrapper: "<div class='js-autocomplete'></div>",
         resultsWrapper: "<div class='autocomplete'></div>",
         resultsContainer: "<ul class='autocomplete__results'></ul>",
-        resultsItem: "<li class='autocomplete__results__item' data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>",
         resultsItemHighlightClass: "autocomplete__results__item--highlight",
+        resultsItem: "<li class='autocomplete__results__item' data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>",
         searchTermHighlightClass: "autocomplete__search-term--highlight",
         hiddenClass: "is-hidden"
       },
@@ -38,7 +38,7 @@ define([ "jquery" ], function($) {
     };
 
     $.extend(this, props);
-    $.extend(this.config, args);
+    $.extend(true, this.config, args);
 
     // cache references to dom elements used
     this.$el = $(this.config.el);
@@ -79,36 +79,6 @@ define([ "jquery" ], function($) {
     hideResultsPanel: function() {
       this.$resultsPanel.addClass(this.config.template.hiddenClass);
       this.displayed = false;
-    },
-
-    filterData: function() {
-      this.results = [];
-      this.searchTerm = this.searchTerm.toLowerCase().trim().split(' ');
-      var matchFlags = [], // Every searchTerm has its own matchFlag for current searchFields set;
-          i = 0;
-      // 1. Init data loop - stop if EoD or results limit reached
-      while ( (i < this.config.data.length) && (this.results.length < this.config.limit) ) {
-        matchFlags = [false]; // Init / reset matchFlags for current searchTerms
-        // 2. Init searchTerm loop
-        for (var j = 0; j < this.searchTerm.length; j++) {
-          // 3. Init searchFields loop
-          for (var k = 0; k < this.config.searchFields.length; k++) {
-            // 4. If (in current data item) any searchField matches current searchTerm, return true.
-            matchFlags[j] =
-              (this.config.data[i][this.config.searchFields[k]].toLowerCase().indexOf(this.searchTerm[j]) != -1) || matchFlags[j];
-          }
-        }
-        // 5. If, for current searchFields, all searchTerms returned true, push 'em to results.
-        if (matchFlags.reduce(function(prev, curr, i, arr){ return  prev && curr; })) {
-          this.results.push(this.config.data[i]);
-        }
-        i++;
-      }
-      if (this.results.length > 0) {
-        this.populateResultPanel();
-      } else {
-        this.clearResults();
-      }
     },
     
     clearResults: function() {
@@ -159,13 +129,25 @@ define([ "jquery" ], function($) {
       });
 
       // 'blur' fires before 'click' so we have to use 'mousedown'
-      this.$resultsPanel.on("mousedown", "." + $(this.config.template.resultsItem)[0].className.split(" ")[0], function(e) {
+      this.$resultsPanel.on("mousedown", $(_this.config.template.resultsItem)[0].tagName, function(e) {
         _this.config.onItem(this);
         _this.clearResults();
       });
 
       this.$el.on("blur", function() {
         if (!_this.visible) {
+          _this.clearResults();
+        }
+      });
+    },
+
+    callFetch: function(searchTerm, cb) {
+      var _this = this;
+      this.config.fetch(searchTerm, function(results) {
+        if (results.length > 0) {
+          _this.results = results.length > _this.config.limit ? results.slice(0, _this.config.limit) : results;
+          cb();
+        } else {
           _this.clearResults();
         }
       });
@@ -190,7 +172,9 @@ define([ "jquery" ], function($) {
       var _this = this;
       this.resultIndex = 0;
       if (searchTerm && searchTerm.length >= this.config.threshold) {
-        this.filterData();
+        this.callFetch(searchTerm, function() {
+          _this.populateResultPanel();
+        });
       }
     },
 
@@ -264,9 +248,8 @@ define([ "jquery" ], function($) {
       $(this.el).val(selectedValue);
     },
 
-    defaultFetch: function() {
-      // must return an array
-      return [ "a","b","c" ];
+    defaultFetch: function(searchTerm, cb) {
+      cb([ "a","b","c" ]);
     }
 
   };
@@ -285,8 +268,8 @@ define([ "jquery" ], function($) {
       if (node.nodeType === 3) {
         var match = node.data.match(re);
         if (match) {
-          var highlight = document.createElement(nodeName || 'span');
-          highlight.className = className || 'highlight';
+          var highlight = document.createElement(nodeName || "span");
+          highlight.className = className || "highlight";
           var wordNode = node.splitText(match.index);
           wordNode.splitText(match[0].length);
           var wordClone = wordNode.cloneNode(true);
@@ -305,19 +288,8 @@ define([ "jquery" ], function($) {
     }
   });
 
-  $.fn.unhighlight = function (options) {
-    var settings = { className: 'highlight', element: 'span' };
-    $.extend(settings, options);
-
-    return this.find(settings.element + "." + settings.className).each(function () {
-      var parent = this.parentNode;
-      parent.replaceChild(this.firstChild, this);
-      parent.normalize();
-    }).end();
-  };
-
   $.fn.highlight = function (words, options) {
-    var settings = { className: 'highlight', element: 'span', caseSensitive: false, wordsOnly: false };
+    var settings = { className: "highlight", element: "span", caseSensitive: false, wordsOnly: false };
     $.extend(settings, options);
     
     if (words.constructor === String) {

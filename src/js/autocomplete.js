@@ -15,8 +15,8 @@ define([ "jquery" ], function($) {
         elementWrapper: "<div class='js-autocomplete'></div>",
         resultsWrapper: "<div class='autocomplete'></div>",
         resultsContainer: "<ul class='autocomplete__results'></ul>",
-        resultsItem: "<li class='autocomplete__results__item' data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>",
         resultsItemHighlightClass: "autocomplete__results__item--highlight",
+        resultsItem: "<li class='autocomplete__results__item' data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>",
         searchTermHighlightClass: "autocomplete__search-term--highlight",
         hiddenClass: "is-hidden"
       },
@@ -38,7 +38,7 @@ define([ "jquery" ], function($) {
     };
 
     $.extend(this, props);
-    $.extend(this.config, args);
+    $.extend(true, this.config, args);
 
     // cache references to dom elements used
     this.$el = $(this.config.el);
@@ -129,7 +129,7 @@ define([ "jquery" ], function($) {
       });
 
       // 'blur' fires before 'click' so we have to use 'mousedown'
-      this.$resultsPanel.on("mousedown", function(e) {
+      this.$resultsPanel.on("mousedown", $(_this.config.template.resultsItem)[0].tagName, function(e) {
         _this.config.onItem(this);
         _this.clearResults();
       });
@@ -145,7 +145,7 @@ define([ "jquery" ], function($) {
       var _this = this;
       this.config.fetch(searchTerm, function(results) {
         if (results.length > 0) {
-          _this.results = results;
+          _this.results = results.length > _this.config.limit ? results.slice(0, _this.config.limit) : results;
           cb();
         } else {
           _this.clearResults();
@@ -268,8 +268,8 @@ define([ "jquery" ], function($) {
       if (node.nodeType === 3) {
         var match = node.data.match(re);
         if (match) {
-          var highlight = document.createElement(nodeName || 'span');
-          highlight.className = className || 'highlight';
+          var highlight = document.createElement(nodeName || "span");
+          highlight.className = className || "highlight";
           var wordNode = node.splitText(match.index);
           wordNode.splitText(match[0].length);
           var wordClone = wordNode.cloneNode(true);
@@ -289,7 +289,7 @@ define([ "jquery" ], function($) {
   });
 
   $.fn.highlight = function (words, options) {
-    var settings = { className: 'highlight', element: 'span', caseSensitive: false, wordsOnly: false };
+    var settings = { className: "highlight", element: "span", caseSensitive: false, wordsOnly: false };
     $.extend(settings, options);
     
     if (words.constructor === String) {

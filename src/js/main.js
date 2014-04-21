@@ -53,14 +53,14 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
     onItem: customOnItem
   });
 
-
+/* Not sure what to do w/this function
   var filterData = function() {
-    this.results = [];
-    this.searchTerm = this.searchTerm.toLowerCase().trim().split(' ');
+    var results = [],
+        searchTerm = this.searchTerm.toLowerCase().trim().split(' ');
     var matchFlags = [], // Every searchTerm has its own matchFlag for current searchFields set;
         i = 0;
     // 1. Init data loop - stop if EoD or results limit reached
-    while ( (i < this.config.data.length) && (this.results.length < this.config.limit) ) {
+    while ( (i < data.length) && (this.results.length < this.config.limit) ) {
       matchFlags = [false]; // Init / reset matchFlags for current searchTerms
       // 2. Init searchTerm loop
       for (var j = 0; j < this.searchTerm.length; j++) {
@@ -68,12 +68,12 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
         for (var k = 0; k < this.config.searchFields.length; k++) {
           // 4. If (in current data item) any searchField matches current searchTerm, return true.
           matchFlags[j] =
-            (this.config.data[i][this.config.searchFields[k]].toLowerCase().indexOf(this.searchTerm[j]) != -1) || matchFlags[j];
+            (data[i][this.config.searchFields[k]].toLowerCase().indexOf(this.searchTerm[j]) != -1) || matchFlags[j];
         }
       }
       // 5. If, for current searchFields, all searchTerms returned true, push 'em to results.
       if (matchFlags.reduce(function(prev, curr, i, arr){ return  prev && curr; })) {
-        this.results.push(this.config.data[i]);
+        this.results.push(data[i]);
       }
       i++;
     }
@@ -83,5 +83,6 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
       this.clearResults();
     }
   };
+*/
 
 });
