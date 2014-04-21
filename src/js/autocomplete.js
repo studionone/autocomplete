@@ -130,7 +130,6 @@ define([ "jquery" ], function($) {
 
       // 'blur' fires before 'click' so we have to use 'mousedown'
       this.$resultsPanel.on("mousedown", function(e) {
-        console.log($(this))
         _this.config.onItem(this);
         _this.clearResults();
       });
