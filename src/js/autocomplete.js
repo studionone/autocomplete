@@ -7,14 +7,14 @@ define([ "jquery" ], function($) {
 
     this.config = {
       el: "",
-      threshold: 2,
+      threshold: 0,
       limit: 0,
       data: this.defaultFetch(),
       searchFields: [],
       template: {
-        elementWrapper: "<div class='autocomplete'></div>",
-        resultsWrapper: "<div class='autocomplete__results__wrapper'></div>",
-        resultsContainer: "<ul class='autocomplete__results__container'></ul>",
+        elementWrapper: "<div class='js-autocomplete'></div>",
+        resultsWrapper: "<div class='autocomplete'></div>",
+        resultsContainer: "<ul class='autocomplete__results'></ul>",
         resultsItem: "<li class='autocomplete__results__item' data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>",
         resultsItemHighlightClass: "autocomplete__results__item--highlight",
         searchTermHighlightClass: "autocomplete__search-term--highlight",
@@ -104,7 +104,7 @@ define([ "jquery" ], function($) {
         }
         i++;
       }
-      if (i > 0) {
+      if (this.results.length > 0) {
         this.populateResultPanel();
       } else {
         this.clearResults();

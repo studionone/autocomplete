@@ -18,11 +18,9 @@ h1 {
   display: none;
 }
 .autocomplete {
-}
-.autocomplete__results__wrapper {
   position: relative;
 }
-.autocomplete__results__container {
+.autocomplete__results {
   list-style: none;
   border: 1px solid #ccc;
   background: white;
