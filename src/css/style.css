@@ -46,3 +46,6 @@ h1 {
 .autocomplete__results__item--highlight {
   background: #efefef;
 }
+.autocomplete__search-term--highlight {
+  background-color: yellow;
+}

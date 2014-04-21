@@ -9,13 +9,15 @@ define([ "jquery" ], function($) {
       el: "",
       threshold: 2,
       limit: 0,
-      fetch: this.defaultFetch,
+      data: this.defaultFetch(),
+      searchFields: [],
       template: {
         elementWrapper: "<div class='autocomplete'></div>",
         resultsWrapper: "<div class='autocomplete__results__wrapper'></div>",
         resultsContainer: "<ul class='autocomplete__results__container'></ul>",
         resultsItem: "<li class='autocomplete__results__item' data-company='{{Company}}'><strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small></li>",
         resultsItemHighlightClass: "autocomplete__results__item--highlight",
+        searchTermHighlightClass: "autocomplete__search-term--highlight",
         hiddenClass: "is-hidden"
       },
       onItem: this.defaultOnItem
@@ -23,6 +25,7 @@ define([ "jquery" ], function($) {
 
     var props = {
       results: [],
+      searchTerm: "",
       displayed: false,
       resultIndex: 0,
       specialkeys: {
@@ -57,13 +60,17 @@ define([ "jquery" ], function($) {
       this.$el
         .wrap(this.config.template.elementWrapper)
         .after($(this.config.template.resultsWrapper)
-          .addClass(this.config.template.hiddenClass));
+               .addClass(this.config.template.hiddenClass));
       this.$wrapper = this.$el.parent();
       // http://jsperf.com/find-sibling-vs-find-wrapper-child
       this.$resultsPanel = this.$el.next();
     },
     
     showResultsPanel: function() {
+      this.$resultsItemList.highlight(this.searchTerm, {
+        element: 'span',
+        className: this.config.template.searchTermHighlightClass
+      });
       this.$resultsPanel.removeClass(this.config.template.hiddenClass);
       this.displayed = true;
       this.highlightResult();
@@ -74,26 +81,42 @@ define([ "jquery" ], function($) {
       this.displayed = false;
     },
 
+    filterData: function() {
+      this.results = [];
+      this.searchTerm = this.searchTerm.toLowerCase().trim().split(' ');
+      var matchFlags = [], // Every searchTerm has its own matchFlag for current searchFields set;
+          i = 0;
+      // 1. Init data loop - stop if EoD or results limit reached
+      while ( (i < this.config.data.length) && (this.results.length < this.config.limit) ) {
+        matchFlags = [false]; // Init / reset matchFlags for current searchTerms
+        // 2. Init searchTerm loop
+        for (var j = 0; j < this.searchTerm.length; j++) {
+          // 3. Init searchFields loop
+          for (var k = 0; k < this.config.searchFields.length; k++) {
+            // 4. If (in current data item) any searchField matches current searchTerm, return true.
+            matchFlags[j] =
+              (this.config.data[i][this.config.searchFields[k]].toLowerCase().indexOf(this.searchTerm[j]) != -1) || matchFlags[j];
+          }
+        }
+        // 5. If, for current searchFields, all searchTerms returned true, push 'em to results.
+        if (matchFlags.reduce(function(prev, curr, i, arr){ return  prev && curr; })) {
+          this.results.push(this.config.data[i]);
+        }
+        i++;
+      }
+      if (i > 0) {
+        this.populateResultPanel();
+      } else {
+        this.clearResults();
+      }
+    },
+    
     clearResults: function() {
       this.results = [];
       this.$resultsPanel.html("");
       this.hideResultsPanel();
     },
-
-    callFetch: function(searchTerm, cb) {
-      var _this = this;
-      this.config.fetch(searchTerm, function(results) {
-        if (results.length > 0) {
-          // Limit results
-          _this.results = results.length > _this.config.limit ? results.slice(0, _this.config.limit) : results;
-
-          cb();
-        } else {
-          _this.clearResults();
-        }
-      });
-    },
-
+    
     renderList: function() {
       var $container = $(this.config.template.resultsContainer);
       this.$resultsItemList = $(this.processTemplate(this.results));
@@ -136,7 +159,7 @@ define([ "jquery" ], function($) {
       });
 
       // 'blur' fires before 'click' so we have to use 'mousedown'
-      this.$resultsPanel.on("mousedown", "." + $(this.config.template.resultsItem)[0].className, function(e) {
+      this.$resultsPanel.on("mousedown", "." + $(this.config.template.resultsItem)[0].className.split(" ")[0], function(e) {
         _this.config.onItem(this);
         _this.clearResults();
       });
@@ -155,6 +178,7 @@ define([ "jquery" ], function($) {
         if (keyName && this.displayed) {
           this.processSpecialKey(keyName, e);
         } else if (!keyName) {
+          this.searchTerm = e.target.value;
           this.processSearch(e.target.value);
         }
       } else {
@@ -166,9 +190,7 @@ define([ "jquery" ], function($) {
       var _this = this;
       this.resultIndex = 0;
       if (searchTerm && searchTerm.length >= this.config.threshold) {
-        this.callFetch(searchTerm, function() {
-          _this.populateResultPanel();
-        });
+        this.filterData();
       }
     },
 
@@ -242,9 +264,9 @@ define([ "jquery" ], function($) {
       $(this.el).val(selectedValue);
     },
 
-    defaultFetch: function(searchTerm, cb) {
+    defaultFetch: function() {
       // must return an array
-      cb([ "a","b","c" ]);
+      return [ "a","b","c" ];
     }
 
   };
@@ -254,8 +276,73 @@ define([ "jquery" ], function($) {
     AutoComplete.prototype[attrname] = methods[attrname];
   }
 
+  //------------------------------------------------------
+  // From jquery.highlight.js:
+  //------------------------------------------------------
+  
+  $.extend({
+    highlight: function (node, re, nodeName, className) {
+      if (node.nodeType === 3) {
+        var match = node.data.match(re);
+        if (match) {
+          var highlight = document.createElement(nodeName || 'span');
+          highlight.className = className || 'highlight';
+          var wordNode = node.splitText(match.index);
+          wordNode.splitText(match[0].length);
+          var wordClone = wordNode.cloneNode(true);
+          highlight.appendChild(wordClone);
+          wordNode.parentNode.replaceChild(highlight, wordNode);
+          return 1; //skip added node in parent
+        }
+      } else if ((node.nodeType === 1 && node.childNodes) && // only element nodes that have children
+                 !/(script|style)/i.test(node.tagName) && // ignore script and style nodes
+                 !(node.tagName === nodeName.toUpperCase() && node.className === className)) { // skip if already highlighted
+        for (var i = 0; i < node.childNodes.length; i++) {
+          i += $.highlight(node.childNodes[i], re, nodeName, className);
+        }
+      }
+      return 0;
+    }
+  });
+
+  $.fn.unhighlight = function (options) {
+    var settings = { className: 'highlight', element: 'span' };
+    $.extend(settings, options);
+
+    return this.find(settings.element + "." + settings.className).each(function () {
+      var parent = this.parentNode;
+      parent.replaceChild(this.firstChild, this);
+      parent.normalize();
+    }).end();
+  };
+
+  $.fn.highlight = function (words, options) {
+    var settings = { className: 'highlight', element: 'span', caseSensitive: false, wordsOnly: false };
+    $.extend(settings, options);
+    
+    if (words.constructor === String) {
+      words = [words];
+    }
+    words = $.grep(words, function(word, i){
+      return word != '';
+    });
+    words = $.map(words, function(word, i) {
+      return word.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    });
+    if (words.length == 0) { return this; };
+
+    var flag = settings.caseSensitive ? "" : "i";
+    var pattern = "(" + words.join("|") + ")";
+    if (settings.wordsOnly) {
+      pattern = "\\b" + pattern + "\\b";
+    }
+    var re = new RegExp(pattern, flag);
+    
+    return this.each(function () {
+      $.highlight(this, re, settings.element, settings.className);
+    });
+  };
+
   return AutoComplete;
 
 });
-
-
