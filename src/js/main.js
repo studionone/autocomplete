@@ -13,8 +13,19 @@ require.config({
 
 require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
 
-  var customFetch = function() {
-    return data;
+  var customFetch = function(searchTerm, cb) {
+    var results = [],
+        searchTerm = searchTerm.toLowerCase();
+
+    for (var i = 0; i < data.length; i++) {
+      var matchesCountry = data[i].Country.toLowerCase().indexOf(searchTerm) != -1,
+          matchesCity = data[i].City.toLowerCase().indexOf(searchTerm) != -1,
+          matchesName = data[i].Company.toLowerCase().indexOf(searchTerm) != -1;
+      if(matchesCity || matchesCountry || matchesName) {
+        results.push(data[i]);
+      }
+    }
+    cb(results);
   };
 
   var customOnItem = function(el) {
@@ -26,8 +37,7 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
     el: "#autocomplete1",
     threshold: 2,
     limit: 5,
-    data: customFetch(), // Data is fetched only once;
-    searchFields: ['Country', 'City', 'Company'],
+    fetch: customFetch,
     template: {
       // Custom html tags are supported.
       // Multiple classes per element are supported, but the first one will always be an element reference.
