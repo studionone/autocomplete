@@ -10,7 +10,6 @@ define([ "jquery" ], function($) {
       threshold: 0,
       limit: 0,
       fetch: this.defaultFetch,
-      searchFields: [],
       template: {
         elementWrapper: "<div class='js-autocomplete'></div>",
         resultsWrapper: "<div class='autocomplete'></div>",
