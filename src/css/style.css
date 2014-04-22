@@ -1,6 +1,6 @@
 *, *:before, *:after {
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
- }
+}
 #wrapper {
   margin: 0px auto;
   width: 400px;
@@ -17,25 +17,33 @@ h1 {
 .is-hidden {
   display: none;
 }
-.autocomplete__results {
-  border: 1px solid #ccc;
-  max-height: 200px;
-  overflow-y: scroll;
+.autocomplete {
+  position: relative;
 }
-.autocomplete__results ul {
+.autocomplete__results {
   list-style: none;
+  border: 1px solid #ccc;
+  background: white;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
   margin: 0px;
   padding: 0px;
 }
-.autocomplete__results ul li {
+.autocomplete__results__item {
+  cursor: pointer;
   border-bottom: 1px solid #ccc;
   padding: 3px;
   font-size: 0.8em;
 }
-.autocomplete__results ul li:last-child {
+.autocomplete__results__item:last-child {
   border: 0px;
 }
-.autocomplete__results ul li:hover,
-.autocomplete__results--highlight {
+.autocomplete__results__item:hover,
+.autocomplete__results__item--highlight {
   background: #efefef;
+}
+.autocomplete__search-term--highlight {
+  background-color: yellow;
 }

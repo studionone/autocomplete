@@ -45,7 +45,7 @@ require([ "autocomplete" ], function(AutoComplete) {
 
       it("should be wrapped in a div with the passed ID.", function() {
         var el = tester.$el;
-        expect(el.parent(".autocomplete")).toExist();
+        expect(el.parent(".js-autocomplete")).toExist();
       });
 
       it("should have a HIDDEN results div directly after it.", function() {
@@ -108,11 +108,12 @@ require([ "autocomplete" ], function(AutoComplete) {
       });
 
       it("should set the input's value on selectResult", function() {
-        spyOn(tester, "renderList").andReturn("<ul><li>test1</li><li>test2</li></ul>");
-        tester.resultIndex = 1;
+        tester.results = [{Company: "Company", City: "Franklin", Country: "USA"}];
+        spyOn(tester, "renderList").andCallThrough();
+        tester.resultIndex = 0;
         tester.populateResultPanel();
         tester.selectResult();
-        expect($(tester.config.el).val()).toEqual("test2");
+        expect($(tester.config.el).val()).toEqual("CompanyFranklin, USA");
       });
 
     });
@@ -234,9 +235,9 @@ require([ "autocomplete" ], function(AutoComplete) {
 
       it("should return a string of <li>s inside a <ul>.", function() {
         tester.results = [{name: "Ben"}];
-        tester.config.template = "<li>{{name}}</li>";
+        tester.config.template.resultsItem = "<li>{{name}}</li>";
         var list = tester.renderList();
-        expect(list).toEqual("<ul><li>Ben</li></ul>");
+        expect(list.html()).toEqual($('<ul class="autocomplete__results__container"><li>Ben</li></ul>').html());
       });
 
       it("calling populateResultPanel should fill the resultsID div.", function() {
