@@ -33,7 +33,6 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
         results.push(data[i]);
       }
     }
-    console.log(results);
     cb(results);
   };
 
