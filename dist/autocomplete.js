@@ -9,6 +9,7 @@ define([ "jquery" ], function($) {
       el: "",
       threshold: 0,
       limit: 0,
+      multiTermHL: true,
       fetch: this.defaultFetch,
       template: {
         elementWrapper: "<div class='js-autocomplete'></div>",
@@ -66,7 +67,7 @@ define([ "jquery" ], function($) {
     },
     
     showResultsPanel: function() {
-      this.$resultsItemList.highlight(this.searchTerm, {
+      this.$resultsItemList.highlight(this.config.multiTermHL ? this.searchTerm.trim().split(' ') : this.searchTerm, {
         element: 'span',
         className: this.config.template.searchTermHighlightClass
       });
