@@ -17,52 +17,33 @@ h1 {
 .is-hidden {
   display: none;
 }
-
 .autocomplete {
   position: relative;
-  display: block;
-  width: 100%;
-  margin: 0;
-  left: 0;
-  top: 75%;
 }
-
 .autocomplete__results {
   list-style: none;
+  border: 1px solid #ccc;
+  background: white;
+  position: absolute;
   top: 0px;
   left: 0px;
   width: 100%;
   margin: 0px;
-  background-color: white;
-  border: 1px solid #DBE6EC;
-  position: absolute;
+  padding: 0px;
 }
-
-.autocomplete__results__item:last-child {
-  border: 0px;
-}
-
 .autocomplete__results__item {
   cursor: pointer;
   border-bottom: 1px solid #ccc;
   padding: 3px;
   font-size: 0.8em;
-  color: gray;
-  padding-left: 50px 10px 10px 10px;
-  font-weight: normal;
-  background-repeat: no-repeat;
-  background-size: auto 100%;
-  cursor: pointer;
-  border-color: white;
-  border-width: 1px 0 0 0;
 }
-
+.autocomplete__results__item:last-child {
+  border: 0px;
+}
 .autocomplete__results__item:hover,
 .autocomplete__results__item--highlight {
-  background-color: #EEF1F3;
-  border-color: #EEF1F3;
+  background: #efefef;
 }
-
 .autocomplete__search-term--highlight {
-  font-weight: bold;
+  background-color: yellow;
 }

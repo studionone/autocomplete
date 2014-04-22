@@ -5,19 +5,21 @@ require.config({
     "autocomplete": "/src/js/autocomplete"
   },
   shim: {
-    'jquery': {
-      exports: '$'
+    "jquery": {
+      exports: "$"
     }
   }
 });
 
 require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
+  
+  "use strict";
 
   var customFetch = function(searchTerm, cb) {
     var results = [],
-        searchFields = ['Country', 'City', 'Company'],
+        searchFields = ["Country", "City", "Company"],
         matchFlags = [];
-    searchTerm = searchTerm.toLowerCase().trim().split(' '); // for space-divided multi-term search
+    searchTerm = searchTerm.toLowerCase().trim().split(" "); // for space-divided multi-term search
     for (var i = 0; i < data.length; i++) {
       // Init/reset matchFlags for current searchTerms
       matchFlags = [false];
@@ -45,7 +47,6 @@ require([ "data", "jquery", "autocomplete" ], function(data, $, AutoComplete) {
     el: "#autocomplete1",
     threshold: 2,
     limit: 5,
-    multiTermHL: true,
     fetch: customFetch,
     template: {
       // Custom html tags are supported.

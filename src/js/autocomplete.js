@@ -9,7 +9,6 @@ define([ "jquery" ], function($) {
       el: "",
       threshold: 0,
       limit: 0,
-      multiTermHL: true,
       fetch: this.defaultFetch,
       template: {
         elementWrapper: "<div class='js-autocomplete'></div>",
@@ -67,8 +66,8 @@ define([ "jquery" ], function($) {
     },
     
     showResultsPanel: function() {
-      this.$resultsItemList.highlight(this.config.multiTermHL ? this.searchTerm.trim().split(' ') : this.searchTerm, {
-        element: 'span',
+      this.$resultsItemList.highlight(this.searchTerm.trim().split(" "), {
+        element: "span",
         className: this.config.template.searchTermHighlightClass
       });
       this.$resultsPanel.removeClass(this.config.template.hiddenClass);
@@ -296,7 +295,7 @@ define([ "jquery" ], function($) {
       words = [words];
     }
     words = $.grep(words, function(word, i){
-      return word != '';
+      return word != "";
     });
     words = $.map(words, function(word, i) {
       return word.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");

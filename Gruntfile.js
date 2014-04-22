@@ -82,6 +82,6 @@ module.exports = function(grunt) {
   // This loads in all the grunt tasks auto-magically.
   require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
 
-  grunt.registerTask("default", [ "connect", "watch" ]);
+  grunt.registerTask("default", [ "connect", "copy", "watch" ]);
 
 };
