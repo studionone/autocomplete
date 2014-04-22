@@ -144,7 +144,11 @@ define([ "jquery" ], function($) {
       var _this = this;
       this.config.fetch(searchTerm, function(results) {
         if (results.length > 0) {
-          _this.results = results.length > _this.config.limit ? results.slice(0, _this.config.limit) : results;
+          if (_this.config.limit > 0) {
+            _this.results = results.length > _this.config.limit ? results.slice(0, _this.config.limit) : results;            
+          } else {
+            _this.results = results;
+          }
           cb();
         } else {
           _this.clearResults();
