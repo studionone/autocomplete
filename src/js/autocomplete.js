@@ -59,6 +59,7 @@ define([ "jquery" ], function($) {
     // I like this method of storing methods and then attaching to the prototype at the end...
 
     init: function() {
+      this.$el.attr("autocomplete", "off"); // turn off native browser autocomplete feature
       this.wrapEl();
       this.setupListeners();
     },
@@ -182,7 +183,7 @@ define([ "jquery" ], function($) {
     processSearch: function(searchTerm) {
       var _this = this;
       this.resultIndex = 0;
-      if (searchTerm && searchTerm.length >= this.config.threshold) {
+      if (searchTerm && searchTerm.trim().length >= this.config.threshold) {
         this.callFetch(searchTerm, function() {
           _this.populateResultPanel();
         });
