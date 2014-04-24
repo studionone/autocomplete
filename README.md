@@ -109,7 +109,7 @@ var myFetch = function(searchTerm, callback) {
 ### onItem()
 Just as the fetch function gives you full control of how the data is fetched, this function gives you full control of what happens when a user **selects** a result in the autocomplete. The typical case is the input value is replaced by the value of the result. But sometimes you may want to do other things (set hidden variables in your form based on the data-id of the list item, navigate directly to a url, etc.).
 
-This function is only passed the DOM element (not the jQuery element, the actual DOM element) of the selected item. So you are receiving exactly **one** list item that will be formatted just as you specified in the myTemplate() function.
+This function is passed the DOM element (not the jQuery element, the actual DOM element) of the selected item, as well as the click event. So you are receiving exactly **one** list item that will be formatted just as you specified in the myTemplate() function. e.preventDefault() and e.stopPropagation() have already been called on the event by the time you receive the el and event.
 
 **Example:**
 ```js
@@ -119,7 +119,7 @@ new AutoComplete({
   ...
 });
 
-var myOnItem = function(el) {
+var myOnItem = function(el, e) {
   var selectedValue = $(el).text();
   $("#myInput").val(selectedValue);
 }
