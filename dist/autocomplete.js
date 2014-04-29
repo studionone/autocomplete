@@ -9,7 +9,7 @@ define([ "jquery" ], function($) {
     };
   }
   
-  var AutoComplete, methods;
+  var AutoComplete, methods, typingTimer;
 
   AutoComplete = function(args) {
 
@@ -18,6 +18,7 @@ define([ "jquery" ], function($) {
       threshold: 0,
       limit: 0,
       fetch: this.defaultFetch,
+      debounceTime: 300,
       template: {
         elementWrapper: "<div class='js-autocomplete'></div>",
         resultsWrapper: "<div class='autocomplete'></div>",
@@ -125,6 +126,7 @@ define([ "jquery" ], function($) {
 
     setupListeners: function() {
       var _this = this;
+
       this.$wrapper.on("keypress", function(e) {
         if(e.which === 13) {
           e.preventDefault();
@@ -134,6 +136,10 @@ define([ "jquery" ], function($) {
 
       this.$wrapper.on("keyup", function(e) {
         _this.processTyping(e);
+      });
+
+      this.$wrapper.on("keydown", function() {
+        clearTimeout(typingTimer);
       });
 
       // 'blur' fires before 'click' so we have to use 'mousedown'
@@ -168,14 +174,18 @@ define([ "jquery" ], function($) {
     },
 
     processTyping: function(e) {
+      var _this = this;
       // if there is an above-threshold value passed
       if (e.target.value) {
         var keyName = this.specialkeys[e.keyCode];
         if (keyName && this.displayed) {
           this.processSpecialKey(keyName, e);
         } else if (!keyName) {
-          this.searchTerm = e.target.value;
-          this.processSearch(e.target.value);
+          clearTimeout(typingTimer);
+          typingTimer = setTimeout(function() {
+            _this.searchTerm = e.target.value;
+            _this.processSearch(e.target.value);
+          }, _this.config.debounceTime);
         }
       } else {
         this.clearResults();

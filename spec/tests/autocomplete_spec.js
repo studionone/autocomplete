@@ -189,9 +189,9 @@ require([ "autocomplete" ], function(AutoComplete) {
           },
           keyCode: 65 // 'a' key
         };
-        spyOn(tester, "processSearch");
+        spyOn(tester, "debounceTyping");
         tester.processTyping(e);
-        expect(tester.processSearch).toHaveBeenCalled();
+        expect(tester.debounceTyping).toHaveBeenCalled();
       });
 
       it("should call highlightResult() if navigating is possible.", function() {
