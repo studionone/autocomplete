@@ -92,7 +92,7 @@ define([ "jquery" ], function($) {
     
     clearResults: function() {
       this.results = [];
-      // $(this.config.template.resultsContainer).remove();
+      this.$resultsPanel.html("");
       this.hideResultsPanel();
     },
     
@@ -181,15 +181,22 @@ define([ "jquery" ], function($) {
         if (keyName && this.displayed) {
           this.processSpecialKey(keyName, e);
         } else if (!keyName) {
-          clearTimeout(typingTimer);
-          typingTimer = setTimeout(function() {
+          _this.debounceTyping(function() {
             _this.searchTerm = e.target.value;
             _this.processSearch(e.target.value);
-          }, _this.config.debounceTime);
+          });
         }
       } else {
         this.clearResults();
       }
+    },
+
+    debounceTyping: function(callback) {
+      var _this = this;
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(function() {
+        callback();
+      }, _this.config.debounceTime);
     },
 
     processSearch: function(searchTerm) {
