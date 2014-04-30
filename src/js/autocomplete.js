@@ -192,6 +192,7 @@ define([ "jquery" ], function($) {
     },
 
     debounceTyping: function(callback) {
+      var _this = this;
       clearTimeout(typingTimer);
       typingTimer = setTimeout(function() {
         callback();

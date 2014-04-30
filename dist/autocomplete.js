@@ -92,7 +92,7 @@ define([ "jquery" ], function($) {
     
     clearResults: function() {
       this.results = [];
-      this.$resultsPanel.html("");
+      // $(this.config.template.resultsContainer).remove();
       this.hideResultsPanel();
     },
     
