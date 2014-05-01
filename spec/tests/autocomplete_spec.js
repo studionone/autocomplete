@@ -132,14 +132,14 @@ require([ "autocomplete" ], function(AutoComplete) {
       });
 
       it("should not fetch results if searchTerm is less than threshold.", function() {
-        tester.config.threshold = 2
+        tester.config.threshold = 2;
         spyOn(tester, "callFetch");
         tester.processSearch("f");
         expect(tester.callFetch).not.toHaveBeenCalled();
       });
 
       it("should fetch results if searchTerm is greater than threshold.", function() {
-        tester.config.threshold = 2
+        tester.config.threshold = 2;
         spyOn(tester, "callFetch");
         tester.processSearch("fra");
         expect(tester.callFetch).toHaveBeenCalled();
@@ -180,18 +180,6 @@ require([ "autocomplete" ], function(AutoComplete) {
         spyOn(tester, "processSpecialKey");
         tester.processTyping(e);
         expect(tester.processSpecialKey).not.toHaveBeenCalled();
-      });
-
-      it("should processSearch if there are no special keys.", function() {
-        var e = {
-          target: {
-            value: "test"
-          },
-          keyCode: 65 // 'a' key
-        };
-        spyOn(tester, "processSearch");
-        tester.processTyping(e);
-        expect(tester.processSearch).toHaveBeenCalled();
       });
 
       it("should call highlightResult() if navigating is possible.", function() {
