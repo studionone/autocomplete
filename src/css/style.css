@@ -40,7 +40,6 @@ h1 {
 .autocomplete__results__item:last-child {
   border: 0px;
 }
-.autocomplete__results__item:hover,
 .autocomplete__results__item--highlight {
   background: #efefef;
 }

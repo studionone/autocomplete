@@ -142,12 +142,19 @@ define([ "jquery" ], function($) {
         clearTimeout(typingTimer);
       });
 
+      var resultsItem = $(_this.config.template.resultsItem)[0].tagName;
+
       // 'blur' fires before 'click' so we have to use 'mousedown'
-      this.$resultsPanel.on("mousedown", $(_this.config.template.resultsItem)[0].tagName, function(e) {
+      this.$resultsPanel.on("mousedown", resultsItem, function(e) {
         e.preventDefault();
         e.stopPropagation();
         _this.config.onItem(this, e);
         _this.clearResults();
+      });
+
+      this.$resultsPanel.on("mouseenter", resultsItem, function() {
+        _this.resultIndex = $(this).index();
+        _this.highlightResult();
       });
 
       this.$el.on("blur", function() {
@@ -212,27 +219,26 @@ define([ "jquery" ], function($) {
     processSpecialKey: function(keyName, e) {
       var changed = false;
       switch (keyName) {
-      case "up": {
-        changed = this.changeIndex("up");
-        break;
+        case "up": {
+          changed = this.changeIndex("up");
+          break;
+        }
+        case "down": {
+          changed = this.changeIndex("down");
+          break;
+        }
+        case "enter": {
+          this.selectResult();
+          break;
+        }
+        case "esc": {
+          this.clearResults();
+          break;
+        }
+        default: {
+          break;
+        }
       }
-      case "down": {
-        changed = this.changeIndex("down");
-        break;
-      }
-      case "enter": {
-        this.selectResult();
-        break;
-      }
-      case "esc": {
-        this.clearResults();
-        break;
-      }
-      default: {
-        break;
-      }
-      }
-
       if (changed) {
         this.highlightResult();
       }
