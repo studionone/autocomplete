@@ -189,8 +189,8 @@ define([ "jquery" ], function($) {
           this.processSpecialKey(keyName, e);
         } else if (!keyName) {
           _this.debounceTyping(function() {
-            _this.searchTerm = e.target.value;
-            _this.processSearch(e.target.value);
+            _this.searchTerm = e.target.value.trim();
+            _this.processSearch(_this.searchTerm);
           });
         }
       } else {
@@ -209,7 +209,7 @@ define([ "jquery" ], function($) {
     processSearch: function(searchTerm) {
       var _this = this;
       this.resultIndex = 0;
-      if (searchTerm && searchTerm.trim().length >= this.config.threshold) {
+      if (searchTerm && searchTerm.length >= this.config.threshold) {
         this.callFetch(searchTerm, function() {
           _this.populateResultPanel();
         });
