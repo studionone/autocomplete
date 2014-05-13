@@ -209,7 +209,6 @@ define([ "jquery" ], function($) {
     processSearch: function(searchTerm) {
       var _this = this;
       this.resultIndex = 0;
-      console.log(searchTerm);
       if (searchTerm && searchTerm.length >= this.config.threshold) {
         this.callFetch(searchTerm, function() {
           _this.populateResultPanel();
