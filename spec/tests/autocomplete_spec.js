@@ -122,7 +122,7 @@ require([ "autocomplete" ], function(AutoComplete) {
 
       it("should reset index when searching.", function() {
         tester.processSearch("test search");
-        expect(tester.resultIndex).toEqual(0);
+        expect(tester.resultIndex).toEqual(-1);
       });
 
       it("should not fetch results if searchTerm is blank.", function() {
