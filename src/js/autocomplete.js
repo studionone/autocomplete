@@ -253,8 +253,11 @@ define([ "jquery" ], function($) {
     selectResult: function() {
       // pass actual DOM element to onItem()
       var el = this.$resultsItemList[this.resultIndex];
-      this.config.onItem(el);
-      this.clearResults();
+
+      if (el) {
+        this.config.onItem(el);
+        this.clearResults();
+      }
     },
 
     // These three templates are the defaults that a user would override
