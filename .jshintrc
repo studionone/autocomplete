@@ -31,13 +31,14 @@
   // globals
 
   "globals": {
-    "define":     false,
-    "require":    false,
-    "module":     false,
-    "describe":   false,
-    "beforeEach": false,
-    "it":         false,
-    "expect":     false,
-    "spyOn":      false
+    "define":      false,
+    "require":     false,
+    "module":      false,
+    "describe":    false,
+    "beforeEach":  false,
+    "it":          false,
+    "expect":      false,
+    "spyOn":       false,
+    "setFixtures": false
   }
 }
