@@ -1,5 +1,7 @@
 module.exports = function(grunt) {
 
+  "use strict";
+
   grunt.initConfig({
 
     pkg: grunt.file.readJSON("package.json"),
@@ -26,7 +28,7 @@ module.exports = function(grunt) {
                 jquery: "./bower_components/jquery/dist/jquery"
               },
               shim: {
-                "jquery": {
+                jquery: {
                   exports: "$"
                 }
               }
@@ -82,6 +84,6 @@ module.exports = function(grunt) {
   // This loads in all the grunt tasks auto-magically.
   require("matchdep").filterDev("grunt-*").forEach(grunt.loadNpmTasks);
 
-  grunt.registerTask("default", [ "connect", "copy", "watch" ]);
-
+  grunt.registerTask("default", [  "copy", "connect", "jasmine:amd" ]);
+  grunt.registerTask("dev", [ "connect", "watch" ]);
 };
