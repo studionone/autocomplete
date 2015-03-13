@@ -1,9 +1,13 @@
-define([], function(){
+define([], function() {
+
+  "use strict";
+
   var data = [
     {
       Country: "Micronesia",
       City: "Enschede",
-      Company: "Leo Foundation"
+      Company: "Leo Foundation",
+      disabled: true
     },
     {
       Country: "Senegal",
