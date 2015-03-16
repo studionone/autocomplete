@@ -20,7 +20,7 @@ define([ "jquery" ], function($) {
 
   function AutoComplete(args) {
     $.extend(this, {
-      config: $.extend(true, defaults, args),
+      config: $.extend(true, {}, defaults, args),
       results: [],
       searchTerm: "",
       displayed: false,
