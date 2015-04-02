@@ -1,7 +1,7 @@
 require.config({
   paths: {
     jquery: "/bower_components/jquery/dist/jquery",
-    data: "/src/js/data",
+    data: "/src/js/example_data",
     autocomplete: "/src/js/autocomplete"
   }
 });
@@ -43,7 +43,7 @@ require([ "jquery", "data", "autocomplete" ], function($, data, AutoComplete) {
       forceSelection: true,
       fetch: customFetch,
       templates: {
-        item: "<strong>{{Company}}</strong><br/><small>{{City}}, {{Country}}</small>",
+        item: "{{Company}}<br /><small>{{City}}, {{Country}}</small>",
         value: "{{Company}}",
       },
     });

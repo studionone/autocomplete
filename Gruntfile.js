@@ -40,7 +40,7 @@ module.exports = function(grunt) {
 
     watch: {
       scripts: {
-        files: [ "Gruntfile.js", "src/js/*.js", "spec/tests/*.js" ],
+        files: [ "Gruntfile.js", "src/**/*", "spec/tests/*.js" ],
         tasks: [ "jasmine:amd" ],
         options: {
           nospawn: true
@@ -58,8 +58,12 @@ module.exports = function(grunt) {
 
     copy: {
       main: {
-        src: "src/js/autocomplete.js",
-        dest: "dist/autocomplete.js"
+        expand: true,
+        cwd: "src/",
+        src: "**/autocomplete*",
+        dest: "dist/",
+        flatten: true,
+        filter: "isFile"
       }
     },
 
