@@ -5,6 +5,10 @@ define([ "jquery" ], function($) {
   var defaults = {
     el: ".js-autocomplete",
     threshold: 2,
+    triggers: {
+      start: false,
+      end: false
+    },
     limit: 5,
     forceSelection: false,
     debounceTime: 200,
@@ -32,7 +36,9 @@ define([ "jquery" ], function($) {
         27: "esc",
         13: "enter",
         38: "up",
-        40: "down"
+        40: "down",
+        37: "left",
+        39: "right"
       },
       classes: {
         wrapper:     "autocomplete",
@@ -43,9 +49,15 @@ define([ "jquery" ], function($) {
         disabled:    "autocomplete__list__item--disabled",
         empty:       "autocomplete__list__item--empty",
         searchTerm:  "autocomplete__list__item__search-term",
-        loading:     "is-loading"
+        loading:     "is-loading",
+        visible:     "is-visible"
       },
     });
+
+    this.isTriggered = !!(this.config.triggers.start && this.config.triggers.end);
+
+    // make sure threshold isn't lower than 1
+    this.config.threshold < 1 && (this.config.threshold = 1);
 
     // if 'value' template is undefined, use 'item' template
     !this.config.templates.value && (this.config.templates.value = this.config.templates.item);
@@ -97,7 +109,8 @@ define([ "jquery" ], function($) {
 
     this.$wrapper
       .on("keyup", $.proxy(this.processTyping, this))
-      .on("keydown", $.proxy(this.processSpecialKey, this));
+      .on("keydown", $.proxy(this.processSpecialKey, this))
+      .on("click", $.proxy(this.processTyping, this));
 
     // 'blur' fires before 'click' so we have to use 'mousedown'
     this.$results
@@ -130,7 +143,7 @@ define([ "jquery" ], function($) {
       .after(this.templates.$results.append(this.templates.$list));
 
     this.$wrapper = this.$el.closest("." + this.classes.wrapper.replace(/ /g, "."));
-    this.$results = $("." + this.classes.results.replace(/ /g, "."), this.$wrapper).hide();
+    this.$results = $("." + this.classes.results.replace(/ /g, "."), this.$wrapper);
     this.$list = $("." + this.classes.list.replace(/ /g, "."), this.$wrapper);
   };
 
@@ -145,8 +158,9 @@ define([ "jquery" ], function($) {
       });
     }
 
-    this.$results.show();
+    this.$wrapper.addClass(this.classes.visible);
     this.displayed = true;
+    this.resultIndex = -1;
 
     // highlight first item if forceSelection
     if (this.config.forceSelection) {
@@ -156,7 +170,7 @@ define([ "jquery" ], function($) {
   };
 
   AutoComplete.prototype.hideResults = function() {
-    this.$results.hide();
+    this.$wrapper.removeClass(this.classes.visible);
     this.displayed = false;
   };
 
@@ -225,8 +239,7 @@ define([ "jquery" ], function($) {
     this.config.fetch(this.searchTerm, function(results) {
       if (!!results) {
         _this.results = limit > 0 ? results.slice(0, limit) : results;
-        if ((!!_this.config.templates.empty || results.length > 0) &&
-            _this.$el.is(":focus") && (_this.searchTerm.length >= _this.config.threshold)) {
+        if ((!!_this.config.templates.empty || results.length > 0) && _this.$el.is(":focus")) {
           _this.showResults();
         } else {
           _this.clearResults();
@@ -236,8 +249,32 @@ define([ "jquery" ], function($) {
     });
   };
 
+  AutoComplete.prototype.getTriggeredValue = function(e) {
+    var fullValue = e.target.value,
+        triggeredValue = "",
+        startTrigger = this.config.triggers.start,
+        endTrigger = this.config.triggers.end,
+        referenceIndex = e.target.selectionStart - 1,
+        startTriggerBeforeReferenceIndex = fullValue.lastIndexOf(startTrigger, referenceIndex),
+        endTriggerBeforeReferenceIndex = fullValue.lastIndexOf(endTrigger, referenceIndex),
+        endTriggerAfterReferenceIndex = fullValue.indexOf(endTrigger, referenceIndex);
+
+    if (startTriggerBeforeReferenceIndex > endTriggerBeforeReferenceIndex) {
+      if (endTriggerAfterReferenceIndex > -1) {
+        var length = endTriggerAfterReferenceIndex - startTriggerBeforeReferenceIndex;
+        // value between start trigger and end trigger
+        triggeredValue = fullValue.substr(startTriggerBeforeReferenceIndex, length);
+      } else {
+        // value between start trigger and end of text
+        triggeredValue = fullValue.substr(startTriggerBeforeReferenceIndex);
+      }
+    }
+
+    return triggeredValue;
+  };
+
   AutoComplete.prototype.processTyping = function(e) {
-    var currentInputVal = $.trim(e.target.value);
+    var currentInputVal = this.isTriggered ? this.getTriggeredValue(e) : $.trim(e.target.value);
 
     if (this.searchTerm != currentInputVal) {
       this.searchTerm = currentInputVal;
@@ -261,44 +298,62 @@ define([ "jquery" ], function($) {
   };
 
   AutoComplete.prototype.changeIndex = function(direction) {
-    var changed = false;
+    var resultsLength = this.results.length,
+        tmpIndex = this.resultIndex;
 
-    if (direction === "up") {
-      if (this.resultIndex > 0 && this.results.length > 1) {
-        this.resultIndex--;
-        changed = true;
-      }
-    } else if (direction === "down") {
-      if (this.resultIndex < this.results.length - 1 && this.results.length > 0) {
-        this.resultIndex++;
-        changed = true;
+    if (resultsLength) {
+      switch (direction) {
+        case "up": {
+          this.resultIndex <= 0 && (this.resultIndex = resultsLength);
+          this.resultIndex--;
+          break;
+        }
+        case "down": {
+          this.resultIndex++;
+          this.resultIndex == resultsLength && (this.resultIndex = 0);
+          break;
+        }
       }
     }
-    return changed;
+
+    return this.resultIndex != tmpIndex;
   };
 
   AutoComplete.prototype.processSpecialKey = function(e) {
     var keyName = this.specialKeys[e.keyCode],
         changed = false;
 
-    e.which === 13 && this.displayed && this.resultIndex > -1 && e.preventDefault();
     clearTimeout(this.typingTimer);
 
     if (this.displayed) {
       switch (keyName) {
+        case "left": {
+          if (this.resultIndex > -1) {
+            e.preventDefault();
+            changed = this.changeIndex("up");
+          }
+          break;
+        }
+        case "right": {
+          if (this.resultIndex > -1) {
+            e.preventDefault();
+            changed = this.changeIndex("down");
+          }
+          break;
+        }
         case "up": {
+          e.preventDefault();
           changed = this.changeIndex("up");
           break;
         }
         case "down": {
+          e.preventDefault();
           changed = this.changeIndex("down");
           break;
         }
-        case "enter": {
-          this.resultIndex > -1 && this.selectResult();
-          break;
-        }
+        case "enter":
         case "tab": {
+          e.preventDefault();
           this.resultIndex > -1 && this.selectResult();
           break;
         }
@@ -307,11 +362,9 @@ define([ "jquery" ], function($) {
           this.clearResults();
           break;
         }
-        default: {
-          break;
-        }
       }
     }
+
     changed && this.highlightResult();
   };
 
