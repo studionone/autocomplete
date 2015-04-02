@@ -3,20 +3,19 @@
   <head>
     <meta charset="UTF-8">
     <title>Autocomplete</title>
-    <link href="src/css/style.css" rel="stylesheet" />
+    <link href="src/css/autocomplete.css" rel="stylesheet" />
+    <link href="src/css/example.css" rel="stylesheet" />
   </head>
-  <body>
-    <div class="wrapper">
-      <h1>Test Autocomplete</h1>
-      <small>
+  <body class="example">
+    <div class="example__wrapper">
+      <h1 class="example__header">Autocomplete Example</h1>
+      <p class="example__description">
         This form is a proof-of-concept for the autocomplete. It is searching through a JSON-formatted array of 100 objects that each contain a City, Country, and Company. It searches all three fields, and outputs the results in a custom display.
-      </small>
-      <form>
-        <label><small>Search:</small></label>
-        <input type="text" class="js-autocomplete-company" placeholder="Start typing..." autocomplete="off"/>
-        <button>Submit</button>
+      </p>
+      <form class="example__form">
+        <input type="text" class="js-autocomplete-company" placeholder="Start typing..." autocomplete="off" /><button class="example__button">Submit</button>
       </form>
     </div>
-    <script type="text/javascript" data-main="src/js/main" src="bower_components/requirejs/require.js"></script>
+    <script type="text/javascript" data-main="src/js/example" src="bower_components/requirejs/require.js"></script>
   </body>
 </html>
