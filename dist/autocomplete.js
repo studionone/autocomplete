@@ -42,6 +42,7 @@ define([ "jquery" ], function($) {
       },
       classes: {
         wrapper:     "autocomplete",
+        input:       "autocomplete__input",
         results:     "autocomplete__results",
         list:        "autocomplete__list",
         item:        "autocomplete__list__item",
@@ -139,6 +140,7 @@ define([ "jquery" ], function($) {
 
   AutoComplete.prototype.wrapEl = function() {
     this.$el
+      .addClass(this.classes.input)
       .wrap(this.templates.$wrapper)
       .after(this.templates.$results.append(this.templates.$list));
 
