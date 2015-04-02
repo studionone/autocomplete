@@ -3,10 +3,16 @@ require([ "jquery", "autocomplete" ], function($, AutoComplete) {
   "use strict";
 
   describe("AutoComplete", function() {
-    var tester;
+    var instance, data;
+
     beforeEach(function() {
+      data = [
+        { text: "a" },
+        { text: "b" },
+        { text: "c" }
+      ];
       setFixtures("<input id='js-autocomplete-test' />");
-      tester = new AutoComplete({
+      instance = new AutoComplete({
         el: "#js-autocomplete-test",
         forceSelection: false,
         extraClasses: {
@@ -18,19 +24,19 @@ require([ "jquery", "autocomplete" ], function($, AutoComplete) {
     describe("The object", function() {
 
       it("should exist.", function() {
-        expect(tester).toBeDefined();
+        expect(instance).toBeDefined();
       });
 
       it("should have a config.el attribute.", function() {
-        expect(tester.config.el).toBeDefined();
+        expect(instance.config.el).toBeDefined();
       });
 
       it("should override the defauls with the user-generated options.", function() {
-        expect(tester.config.el).toEqual("#js-autocomplete-test");
+        expect(instance.config.el).toEqual("#js-autocomplete-test");
       });
 
       it("should have an empty array as the results.", function() {
-        expect(tester.results).toEqual([]);
+        expect(instance.results).toEqual([]);
       });
 
     });
@@ -38,21 +44,20 @@ require([ "jquery", "autocomplete" ], function($, AutoComplete) {
     describe("The DOM element", function() {
 
       it("should exist.", function() {
-        var el = $(tester.config.el);
+        var el = $(instance.config.el);
         expect(el).toExist();
       });
 
       it("should be wrapped in a div with the passed ID.", function() {
-        expect(tester.$wrapper).toExist();
+        expect(instance.$wrapper).toExist();
       });
 
-      it("should add extra class to wrapper", function() {
-        expect(tester.$wrapper).toHaveClass("ohdeer");
+      it("should add extra class to wrapper.", function() {
+        expect(instance.$wrapper).toHaveClass("ohdeer");
       });
 
-      it("should have a HIDDEN results div directly after it.", function() {
-        expect(tester.$results).toExist();
-        expect(tester.$results).toBeHidden();
+      it("should have results div.", function() {
+        expect(instance.$results).toExist();
       });
 
     });
@@ -61,220 +66,278 @@ require([ "jquery", "autocomplete" ], function($, AutoComplete) {
       var el;
 
       beforeEach(function() {
-        el = tester.$results;
+        el = instance.$results;
       });
 
       it("should show results on showResults().", function() {
-        tester.showResults();
+        instance.showResults();
         expect(el).toBeVisible();
       });
 
       it("should set displayed to true showResults().", function() {
-        tester.displayd = false;
-        tester.showResults();
-        expect(tester.displayed).toBeTruthy;
+        instance.displayd = false;
+        instance.showResults();
+        expect(instance.displayed).toBeTruthy;
       });
 
-      it("should hide results on hideResults().", function() {
-        tester.hideResults();
-        expect(el).toBeHidden();
+      it("should remove 'visible' class on hideResults().", function() {
+        instance.hideResults();
+        expect(instance.$el).not.toHaveClass(instance.classes.visible);
       });
 
       it("should clear all html on clearResults.", function() {
-        tester.$list.html("<li>content</li>");
-        tester.clearResults();
-        expect(tester.$list).toBeEmpty();
+        instance.$list.html("<li>content</li>");
+        instance.clearResults();
+        expect(instance.$list).toBeEmpty();
       });
 
       it("should clear the global results array on clearResults.", function() {
-        tester.results = [ 1, 2, 3 ];
-        tester.clearResults();
-        expect(tester.results).toEqual([]);
+        instance.results = [ 1, 2, 3 ];
+        instance.clearResults();
+        expect(instance.results).toEqual([]);
       });
 
       it("should hide results panel on clearResults.", function() {
-        tester.showResults();
-        tester.clearResults();
-        expect(el).toBeHidden();
+        instance.showResults();
+        instance.clearResults();
+        expect(instance.$el).not.toHaveClass(instance.classes.visible);
       });
 
       it("should set displayed to false on hide results.", function() {
-        tester.showResults();
-        tester.hideResults();
-        expect(tester.displayed).toBeFalsy();
+        instance.showResults();
+        instance.hideResults();
+        expect(instance.displayed).toBeFalsy();
       });
 
       it("should set the input's value on selectResult", function() {
-        tester.results = [ { text: "robisaduck" } ];
-        tester.showResults();
-        tester.resultIndex = 0;
-        tester.selectResult();
-        expect($(tester.config.el).val()).toEqual("robisaduck");
+        instance.results = [ { text: "robisaduck" } ];
+        instance.showResults();
+        instance.resultIndex = 0;
+        instance.selectResult();
+        expect($(instance.config.el).val()).toEqual("robisaduck");
       });
 
       it("should display empty results item if it's defined & nothing was found", function() {
-        tester.config.templates.empty = "No matches found";
-        tester.results = [];
-        tester.showResults();
-        expect(tester.$results.text()).toBe("No matches found");
+        instance.config.templates.empty = "No matches found";
+        instance.results = [];
+        instance.showResults();
+        expect(instance.$results.text()).toBe("No matches found");
       });
 
       it("shouldn't call selectResult() if disabled item is clicked", function() {
-        var $disabledItem = $(tester.config.templates.resultsItem).addClass("is-disabled");
-        spyOn(tester, "selectResult");
-        tester.$results.html($disabledItem);
+        var $disabledItem = $(instance.config.templates.resultsItem).addClass("is-disabled");
+        spyOn(instance, "selectResult");
+        instance.$results.html($disabledItem);
         $disabledItem.trigger("mousedown");
 
-        // expect(tester.clearResults).not.toHaveBeenCalled();
-        expect(tester.selectResult).not.toHaveBeenCalled();
+        expect(instance.selectResult).not.toHaveBeenCalled();
       });
 
       describe("with forceSelection enabled", function() {
+        var e;
 
         beforeEach(function() {
-          tester.config.forceSelection = true;
+          instance.config.forceSelection = true;
         });
 
-        it("should set resultIndex to 0 when .showResults() is called", function() {
-          tester.showResults();
+        it("should call .changeIndex() when .showResults() is called", function() {
+          spyOn(instance, "changeIndex");
+          instance.showResults();
 
-          expect(tester.resultIndex).toEqual(0);
-        });
-
-        it("should call .highlightResult() when .showResults() is called", function() {
-          spyOn(tester, "highlightResult");
-          tester.showResults();
-
-          expect(tester.highlightResult).toHaveBeenCalled();
+          expect(instance.changeIndex).toHaveBeenCalled();
         });
 
         it("should clear input value if 'esc' is pressed", function() {
-          spyOn(tester.$el, "val");
-          tester.displayed = true;
-          tester.processSpecialKey({ keyCode: 27 });
+          spyOn(instance.$el, "val");
+          e = $.Event("keydown");
+          e.keyCode = 27;
 
-          expect(tester.$el.val).toHaveBeenCalledWith("");
+          instance.displayed = true;
+          instance.processSpecialKey(e);
+
+          expect(instance.$el.val).toHaveBeenCalledWith("");
         });
 
         it("should clear input if e.relatedTarget is 'null' (for ex. mouseclick on empty area)", function() {
-          var e = $.Event("blur");
+          e = $.Event("blur");
           e.relatedTarget = null;
-          spyOn(tester.$el, "val");
-          tester.$el.trigger(e);
+          spyOn(instance.$el, "val");
+          instance.$el.trigger(e);
 
-          expect(tester.$el.val).toHaveBeenCalledWith("");
+          expect(instance.$el.val).toHaveBeenCalledWith("");
         });
 
         it("shouldn't clear input if item has been previously selected", function() {
-          var e = $.Event("blur");
+          e = $.Event("blur");
           e.relatedTarget = null;
-          tester.selected = true;
-          spyOn(tester.$el, "val");
-          tester.$el.trigger(e);
+          instance.selected = true;
+          spyOn(instance.$el, "val");
+          instance.$el.trigger(e);
 
-          expect(tester.$el.val).not.toHaveBeenCalled();
+          expect(instance.$el.val).not.toHaveBeenCalled();
         });
 
       });
     });
 
     describe("The user typing", function() {
+      var e;
 
       it("should reset index when searching.", function() {
-        tester.processSearch("test search");
-        expect(tester.resultIndex).toEqual(-1);
+        instance.processSearch("test search");
+        expect(instance.resultIndex).toEqual(-1);
       });
 
       it("should not fetch results if input is blank.", function() {
-        spyOn(tester, "debounceSearch");
-        tester.config.threshold = 0;
-        tester.searchTerm = "o";
-        tester.processTyping({ target: { value: "" } });
-        expect(tester.debounceSearch).not.toHaveBeenCalled();
+        spyOn(instance, "debounceSearch");
+        instance.config.threshold = 0;
+        instance.searchTerm = "o";
+        instance.processTyping({ target: { value: "" } });
+        expect(instance.debounceSearch).not.toHaveBeenCalled();
       });
 
       it("should not fetch results if input length is less than threshold.", function() {
-        spyOn(tester, "debounceSearch");
-        tester.config.threshold = 2;
-        tester.searchTerm = "Oo";
-        tester.processTyping({ target: { value: "O" } });
-        expect(tester.debounceSearch).not.toHaveBeenCalled();
+        spyOn(instance, "debounceSearch");
+        instance.config.threshold = 2;
+        instance.searchTerm = "Oo";
+        instance.processTyping({ target: { value: "O" } });
+        expect(instance.debounceSearch).not.toHaveBeenCalled();
       });
 
       it("should add loadingClass & fetch results if searchTerm.length >= threshold and different from previous input value", function() {
-        tester.config.threshold = 2;
-        spyOn(tester, "callFetch");
-        spyOn(tester.$el, "val").andReturn("f");
-        tester.processSearch("fr");
-        expect(tester.$wrapper).toHaveClass(tester.classes.loading);
-        expect(tester.callFetch).toHaveBeenCalled();
+        instance.config.threshold = 2;
+        spyOn(instance, "callFetch");
+        spyOn(instance.$el, "val").andReturn("f");
+        instance.processSearch("fr");
+        expect(instance.$wrapper).toHaveClass(instance.classes.loading);
+        expect(instance.callFetch).toHaveBeenCalled();
       });
 
       it("should remove loadingClass when .callFetch() is called", function() {
-        tester.config.fetch = function(searchTerm, cb) { cb([]); };
-        tester.callFetch();
-        expect(tester.$wrapper).not.toHaveClass("is-loading");
+        instance.config.fetch = function(searchTerm, cb) { cb([]); };
+        instance.callFetch();
+        expect(instance.$wrapper).not.toHaveClass("is-loading");
       });
 
       it("should clear results if the input is empty.", function() {
-        spyOn(tester, "clearResults");
-        tester.searchTerm = "s";
-        tester.processTyping({ target: { value: "" }});
-        expect(tester.clearResults).toHaveBeenCalled();
+        spyOn(instance, "clearResults");
+        instance.searchTerm = "s";
+        instance.processTyping({ target: { value: "" }});
+        expect(instance.clearResults).toHaveBeenCalled();
       });
 
-      it("should call highlightResult() if navigating is possible.", function() {
-        spyOn(tester, "highlightResult");
-        tester.resultIndex = 1;
-        tester.displayed = true;
-        tester.results = [ "a", "b", "c" ];
-        tester.processSpecialKey({ keyCode: 38 });
-        expect(tester.highlightResult).toHaveBeenCalled();
-      });
+      describe("Arrows", function() {
+        var e;
 
-      it("shouldn't call highlightResult() if only one result when up/down.", function() {
-        spyOn(tester, "highlightResult");
-        tester.resultIndex = 0;
-        tester.displayed = true;
-        tester.results = [ "a" ];
-        tester.processSpecialKey({ keyCode: 38 });
-        expect(tester.highlightResult).not.toHaveBeenCalled();
-      });
+        beforeEach(function() {
+          spyOn(instance, "highlightResult");
+          spyOn(instance, "changeIndex").andReturn(true);
 
-      it("should call highlightResult() if navigating down is possible.", function() {
-        spyOn(tester, "highlightResult");
-        tester.resultIndex = 1;
-        tester.displayed = true;
-        tester.results = [ "a", "b", "c" ];
-        tester.processSpecialKey({ keyCode: 40 });
-        expect(tester.highlightResult).toHaveBeenCalled();
+          e = $.Event("keypress");
+          instance.results = [ "a", "b", "c" ];
+          instance.displayed = true;
+        });
+
+        it("calls .highlightResult() on up/down keypress", function() {
+          e.keyCode = 38;
+          instance.processSpecialKey(e);
+          e.keyCode = 40;
+          instance.processSpecialKey(e);
+
+          expect(instance.highlightResult).toHaveBeenCalled();
+          expect(instance.highlightResult.calls.length).toEqual(2);
+        });
+
+        it("doesn't call .highlightResult() on left/right keypress if nothing yet highlighted", function() {
+          e.keyCode = 37;
+          instance.processSpecialKey(e);
+          e.keyCode = 39;
+          instance.processSpecialKey(e);
+
+          expect(instance.highlightResult).not.toHaveBeenCalled();
+        });
+
+        it("calls .highlightResult() on left/right keypress if anything highlighted", function() {
+          instance.resultIndex = 1;
+
+          e.keyCode = 37;
+          instance.processSpecialKey(e);
+          e.keyCode = 39;
+          instance.processSpecialKey(e);
+
+          expect(instance.highlightResult).toHaveBeenCalled();
+          expect(instance.highlightResult.calls.length).toEqual(2);
+        });
+
       });
 
       describe("with forceSelection enabled", function() {
-        var e;
 
         it("should restore input value if user changes it and blurs input before selection", function() {
-          spyOn(tester.$el, "val");
+          spyOn(instance.$el, "val");
           e = $.Event("blur");
           e.target = { value: "foo" };
-          tester.config.forceSelection = true;
-          tester.searchTerm = "foom";
-          tester.selected = true;
+          instance.config.forceSelection = true;
+          instance.searchTerm = "foom";
+          instance.selected = true;
 
-          tester.$el.trigger(e);
-          expect(tester.$el.val).toHaveBeenCalledWith("foom");
+          instance.$el.trigger(e);
+          expect(instance.$el.val).toHaveBeenCalledWith("foom");
         });
 
+      });
+    });
+
+    describe("Value triggers", function() {
+
+      var e;
+
+      beforeEach(function() {
+        instance = new AutoComplete({
+          el: "#js-autocomplete-test",
+          threshold: 1,
+          triggers: {
+            start: "@",
+            end: " "
+          }
+        });
+        instance.searchTerm = "";
+        e = $.Event("keyup");
+        e.target = {
+          value: "Hello, @nidala claims that @robisa",
+          selectionStart: null
+        };
+      });
+
+      it("searchTerm gets triggered value if caret is at the end of input value", function() {
+        e.target.selectionStart = e.target.value.length;
+        instance.$el.trigger(e);
+
+        expect(instance.searchTerm).toEqual("@robisa");
+      });
+
+      it("searchTerm gets triggered value if caret is between start & end triggers", function() {
+        e.target.selectionStart = 10;
+        instance.$el.trigger(e);
+
+        expect(instance.searchTerm).toEqual("@nidala");
+      });
+
+      it("searchTerm gets empty string if there are no triggers around caret position", function() {
+        e.target.selectionStart = 3;
+        instance.$el.trigger(e);
+
+        expect(instance.searchTerm).toEqual("");
       });
     });
 
     describe("The fetching of results", function() {
 
       it("shouldn't change the global result set if nothing returned.", function() {
-        tester.results = [ 1 ];
-        spyOn(tester.config, "fetch").andReturn([]);
-        tester.callFetch("fra");
-        expect(tester.results).toEqual([ 1 ]);
+        instance.results = [ 1 ];
+        spyOn(instance.config, "fetch").andReturn([]);
+        instance.callFetch("fra");
+        expect(instance.results).toEqual([ 1 ]);
       });
 
     });
@@ -282,64 +345,102 @@ require([ "jquery", "autocomplete" ], function($, AutoComplete) {
     describe("Rendering results", function() {
 
       it("should return properly rendered item element.", function() {
-        tester.results = [ { text: "Ben" } ];
-        tester.processTemplate();
-        expect(tester.$items[0].outerHTML.replace(/\"/g, "\'"))
+        instance.results = [ { text: "Ben" } ];
+        instance.processTemplate();
+        expect(instance.$items[0].outerHTML.replace(/\"/g, "\'"))
           .toEqual("<div class='autocomplete__list__item' data-value='Ben'><strong>Ben</strong></div>");
       });
 
       it("calling populateResults() should fill the list div.", function() {
-        tester.results = [ 1, 2, 3 ];
-        tester.populateResults();
-        expect(tester.$list).not.toBeEmpty();
+        instance.results = [ 1, 2, 3 ];
+        instance.populateResults();
+        expect(instance.$list).not.toBeEmpty();
       });
 
     });
 
     describe("Navigating results", function() {
 
-      it("should not be able to move up at index 0.", function() {
-        tester.results = [ "a", "b", "c" ];
-        tester.resultIndex = 0;
-        tester.changeIndex("up");
-        expect(tester.resultIndex).toEqual(0);
+      beforeEach(function() {
+        instance.results = data;
+        instance.processTemplate();
       });
 
-      it("should not be able to move down at last item.", function() {
-        tester.results = [ "a", "b", "c" ];
-        tester.resultIndex = 2;
-        tester.changeIndex("down");
-        expect(tester.resultIndex).toEqual(2);
+      it("should be able to move up at index 0 & jump to last item.", function() {
+        instance.resultIndex = 0;
+        instance.changeIndex("up");
+
+        expect(instance.resultIndex).toEqual(2);
+      });
+
+      it("should be able to move down at last index & jump to first item.", function() {
+        instance.resultIndex = 2;
+        instance.changeIndex("down");
+
+        expect(instance.resultIndex).toEqual(0);
       });
 
       it("should move down if not at last item.", function() {
-        tester.results = [ "a", "b", "c" ];
-        tester.resultIndex = 1;
-        tester.changeIndex("down");
-        expect(tester.resultIndex).toEqual(2);
+        instance.resultIndex = 1;
+        instance.changeIndex("down");
+
+        expect(instance.resultIndex).toEqual(2);
       });
 
       it("should move up if not at first item.", function() {
-        tester.results = [ "a", "b", "c" ];
-        tester.resultIndex = 1;
-        tester.changeIndex("up");
-        expect(tester.resultIndex).toEqual(0);
+        instance.resultIndex = 1;
+        instance.changeIndex("up");
+
+        expect(instance.resultIndex).toEqual(0);
       });
 
       it("should return true if changed.", function() {
-        tester.results = [ "a", "b", "c" ];
-        tester.resultIndex = 1;
-        var changed = tester.changeIndex("up");
-        expect(changed).toBeTruthy();
+        instance.resultIndex = 1;
+
+        expect(instance.changeIndex("up")).toBeTruthy();
       });
 
       it("should return false if not changed.", function() {
-        tester.results = [ "a", "b", "c" ];
-        tester.resultIndex = 0;
-        var changed = tester.changeIndex("up");
-        expect(changed).toBeFalsy();
+        instance.results = [ "a" ];
+        instance.resultIndex = 0;
+
+        expect(instance.changeIndex("up")).toBeFalsy();
       });
 
+      describe("when one result is disabled", function() {
+
+        beforeEach(function() {
+          instance.results[0].disabled = true;
+          instance.processTemplate();
+        });
+
+        it("skips 2 items", function() {
+          instance.resultIndex = -1;
+
+          instance.changeIndex("down");
+          expect(instance.resultIndex).toEqual(1);
+
+          instance.changeIndex("up");
+          expect(instance.resultIndex).toEqual(2);
+        });
+
+      });
+
+      describe("when all results are disabled", function() {
+
+        beforeEach(function() {
+          for (var i = 0; i < instance.results.length; i++) {
+            instance.results[i].disabled = true;
+          }
+          instance.processTemplate();
+        });
+
+        it("returns false", function() {
+          expect(instance.changeIndex("down")).toBeFalsy();
+          expect(instance.changeIndex("up")).toBeFalsy();
+        });
+
+      });
     });
   });
 });
