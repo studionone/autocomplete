@@ -106,7 +106,7 @@ define([ "jquery" ], function($) {
 
   Autocomplete.prototype.listen = function() {
     var _this = this,
-        itemSelector = "." + this.classes.item.replace(" ", ".");
+        itemSelector = "." + this.classes.item.replace(/ /g, ".");
 
     this.$el
       .on("keyup click", $.proxy(this.processTyping, this))
