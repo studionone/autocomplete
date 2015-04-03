@@ -116,7 +116,7 @@ define([ "jquery" ], function($) {
           e.target.value != _this.searchTerm && _this.$el.val(_this.searchTerm);
           !_this.selected && _this.$el.val("");
         }
-        // _this.clearResults();
+        _this.clearResults();
       });
 
     // 'blur' fires before 'click' so we have to use 'mousedown'
