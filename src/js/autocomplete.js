@@ -5,13 +5,10 @@ define([ "jquery" ], function($) {
   var defaults = {
     el: ".js-autocomplete",
     threshold: 2,
-    triggers: {
-      start: false,
-      end: false
-    },
     limit: 5,
     forceSelection: false,
     debounceTime: 200,
+    triggerChar: null,
     templates: {
       item: "<strong>{{text}}</strong>",
       value: "{{text}}", // appended to item as 'data-value' attribute
@@ -54,8 +51,6 @@ define([ "jquery" ], function($) {
         visible:     "is-visible"
       },
     });
-
-    this.isTriggered = !!(this.config.triggers.start && this.config.triggers.end);
 
     // make sure threshold isn't lower than 1
     this.config.threshold < 1 && (this.config.threshold = 1);
@@ -251,31 +246,31 @@ define([ "jquery" ], function($) {
   };
 
   Autocomplete.prototype.getTriggeredValue = function(e) {
-    var fullValue = e.target.value,
-        triggeredValue = "",
-        startTrigger = this.config.triggers.start,
-        endTrigger = this.config.triggers.end,
-        referenceIndex = e.target.selectionStart - 1,
-        startTriggerBeforeReferenceIndex = fullValue.lastIndexOf(startTrigger, referenceIndex),
-        endTriggerBeforeReferenceIndex = fullValue.lastIndexOf(endTrigger, referenceIndex),
-        endTriggerAfterReferenceIndex = fullValue.indexOf(endTrigger, referenceIndex);
+    var referenceIndex = e.target.selectionStart - 1,
+        fullValue = e.target.value,
+        lastSpace = fullValue.lastIndexOf(" ", referenceIndex),
+        nextSpace = fullValue.indexOf(" ", referenceIndex),
+        lastNewline = fullValue.lastIndexOf("\n", referenceIndex),
+        nextNewline = fullValue.indexOf("\n", referenceIndex),
+        startIndex, endIndex, triggeredValue;
 
-    if (startTriggerBeforeReferenceIndex > endTriggerBeforeReferenceIndex) {
-      if (endTriggerAfterReferenceIndex > -1) {
-        var length = endTriggerAfterReferenceIndex - startTriggerBeforeReferenceIndex;
-        // value between start trigger and end trigger
-        triggeredValue = fullValue.substr(startTriggerBeforeReferenceIndex, length);
-      } else {
-        // value between start trigger and end of text
-        triggeredValue = fullValue.substr(startTriggerBeforeReferenceIndex);
-      }
+    startIndex = lastSpace > lastNewline ? lastSpace : lastNewline;
+
+    if (nextSpace > -1 && nextNewline > -1) {
+      endIndex = nextSpace < nextNewline ? nextSpace : nextNewline;
+    } else if (nextSpace == -1 && nextNewline > -1) {
+      endIndex = nextNewline;
+    } else if (nextSpace > -1 && nextNewline == -1) {
+      endIndex = nextSpace;
     }
 
-    return triggeredValue;
+    triggeredValue = fullValue.substring(startIndex + 1, endIndex);
+
+    return triggeredValue.charAt(0) == this.config.triggerChar ? triggeredValue : "";
   };
 
   Autocomplete.prototype.processTyping = function(e) {
-    var currentInputVal = this.isTriggered ? this.getTriggeredValue(e) : $.trim(e.target.value);
+    var currentInputVal = this.config.triggerChar ? this.getTriggeredValue(e) : $.trim(e.target.value);
 
     if (this.searchTerm != currentInputVal) {
       this.searchTerm = currentInputVal;
