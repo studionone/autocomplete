@@ -288,7 +288,7 @@ require([ "jquery", "autocomplete" ], function($, AutoComplete) {
       });
     });
 
-    describe("Value triggers", function() {
+    describe("Typing with triggerChar defined", function() {
 
       var e;
 
@@ -296,38 +296,63 @@ require([ "jquery", "autocomplete" ], function($, AutoComplete) {
         instance = new AutoComplete({
           el: "#js-autocomplete-test",
           threshold: 1,
-          triggers: {
-            start: "@",
-            end: " "
-          }
+          triggerChar: "@",
+          precedeWithSpace: false
         });
         instance.searchTerm = "";
         e = $.Event("keyup");
         e.target = {
-          value: "Hello, @nidala claims that @robisa",
+          value: "@ka @wa sa@ki @to\n@yo\n@ta",
           selectionStart: null
         };
       });
 
-      it("searchTerm gets triggered value if caret is at the end of input value", function() {
-        e.target.selectionStart = e.target.value.length;
-        instance.$el.trigger(e);
+      describe("gets triggered word if it", function() {
 
-        expect(instance.searchTerm).toEqual("@robisa");
+        it("is at index 0", function() {
+          e.target.selectionStart = 3;
+          instance.$el.trigger(e);
+
+          expect(instance.searchTerm).toEqual("@ka");
+        });
+
+        it("is surrounded with whitespace", function() {
+          e.target.selectionStart = 7;
+          instance.$el.trigger(e);
+
+          expect(instance.searchTerm).toEqual("@wa");
+        });
+
+        it("ends with newline", function() {
+          e.target.selectionStart = 17;
+          instance.$el.trigger(e);
+
+          expect(instance.searchTerm).toEqual("@to");
+        });
+
+        it("is surrounded by newlines", function() {
+          e.target.selectionStart = 21;
+          instance.$el.trigger(e);
+
+          expect(instance.searchTerm).toEqual("@yo");
+        });
+
+        it("ends with eol", function() {
+          e.target.selectionStart = e.target.value.length - 1;
+          instance.$el.trigger(e);
+
+          expect(instance.searchTerm).toEqual("@ta");
+        });
       });
 
-      it("searchTerm gets triggered value if caret is between start & end triggers", function() {
-        e.target.selectionStart = 10;
-        instance.$el.trigger(e);
+      describe("doesn't get triggered word if it", function() {
 
-        expect(instance.searchTerm).toEqual("@nidala");
-      });
+        it("is preceded by any character - not whitespace of newline", function() {
+          e.target.selectionStart = 13;
+          instance.$el.trigger(e);
 
-      it("searchTerm gets empty string if there are no triggers around caret position", function() {
-        e.target.selectionStart = 3;
-        instance.$el.trigger(e);
-
-        expect(instance.searchTerm).toEqual("");
+          expect(instance.searchTerm).toEqual("");
+        });
       });
     });
 
