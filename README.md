@@ -12,17 +12,14 @@ Clone this repository. Run `npm install` and `bower install`. Then run `grunt de
 * jQuery
 
 ## Usage
-The AutoComplete widget is always instantiated with an html element. This element is expected to be an `input` element, as the user will type and be presented with a set of matched results. Other than the element, you will also want to set a threshold of characters that must be typed before the Autocomplete will start fetching results. By default this is set at 2, but you can override that. You can also limit the number of results displayed in the result list by using the `limit` config option. Search term can be triggered by chosen characters (`triggers`) - you might want to use it f.e. for emojis in `textarea` element. If you want to limit input value to fetched results only, use `forceSelection` option. `debounceTime` defines how long (after users stops typing) should AutoComplete wait before it calls `fetch` function.
+The AutoComplete widget is always instantiated with an html element. This element is expected to be an `input` element, as the user will type and be presented with a set of matched results. Other than the element, you will also want to set a threshold of characters that must be typed before the Autocomplete will start fetching results. By default this is set at 2, but you can override that. You can also limit the number of results displayed in the result list by using the `limit` config option. Search term can be triggered by chosen character (`triggerChar`) - you might want to use it f.e. for user mentions in `textarea` element. If you want to limit input value to fetched results only, use `forceSelection` option. `debounceTime` defines how long (after users stops typing) should AutoComplete wait before it calls `fetch` function.
 
 ```js
 new AutoComplete({
   el: ".js-autocomplete-input",
   threshold: 2,
   limit: 5,
-  triggers: {
-    start: ":",
-    end: ":"
-  }
+  triggerChar: "@",
   forceSelection: true,
   debounceTime: 200,
   ...
