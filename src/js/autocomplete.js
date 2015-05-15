@@ -85,7 +85,9 @@ define([ "jquery" ], function($) {
           .html(this.config.templates.empty)
     };
 
-    this.$el = $(this.config.el).attr("autocomplete", "off"), // turn off native browser autocomplete feature
+    if (!$(this.config.el).is("textarea")) {
+      this.$el = $(this.config.el).attr("autocomplete", "off"), // turn off native browser autocomplete feature
+    }
 
     this.init();
   }
