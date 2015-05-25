@@ -44,8 +44,18 @@ require([ "jquery", "autocomplete" ], function($, AutoComplete) {
     describe("The DOM element", function() {
 
       it("should exist.", function() {
-        var el = $(instance.config.el);
-        expect(el).toExist();
+        expect(instance.$el).toExist();
+      });
+
+      it("should have autocomplete='off' attribute", function() {
+        expect(instance.$el).toHaveAttr("autocomplete", "off");
+      });
+
+      it("should't have autocomplete attribute if $el is textarea", function() {
+        setFixtures("<textarea class='js-autocomplete'></textarea>");
+        var instanceOnTextarea = new AutoComplete({ el: ".js-autocomplete" });
+
+        expect(instanceOnTextarea.$el).not.toHaveAttr("autocomplete");
       });
 
       it("should be wrapped in a div with the passed ID.", function() {
