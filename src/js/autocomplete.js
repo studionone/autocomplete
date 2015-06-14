@@ -104,6 +104,7 @@ define([ "jquery" ], function($) {
 
   Autocomplete.prototype.listen = function() {
     var _this = this,
+        touchmoved = false,
         itemSelector = "." + this.classes.item.replace(/ /g, ".");
 
     this.$el
@@ -119,14 +120,20 @@ define([ "jquery" ], function($) {
 
     // 'blur' fires before 'click' so we have to use 'mousedown'
     this.$results
-      .on("mousedown", itemSelector, function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        _this.selectResult();
+      .on("mousedown touchend", itemSelector, function(e) {
+        if (!touchmoved) {
+          e.preventDefault();
+          e.stopPropagation();
+          _this.selectResult();
+        }
       })
-      .on("mouseenter", itemSelector, function() {
+      .on("mouseenter touchstart", itemSelector, function() {
         _this.resultIndex = $(this).index();
         _this.highlightResult();
+        touchmoved = false;
+      })
+      .on("touchmove", itemSelector, function() {
+        touchmoved = true;
       });
 
   };
