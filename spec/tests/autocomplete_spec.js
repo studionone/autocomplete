@@ -477,5 +477,41 @@ require([ "jquery", "autocomplete" ], function($, AutoComplete) {
 
       });
     });
+
+    describe("Results behaviour on touch events", function() {
+      var $item;
+
+      beforeEach(function() {
+        spyOn(instance, "highlightResult");
+        spyOn(instance, "selectResult");
+
+        instance.$results.append("<div class='" + instance.classes.item + "'>");
+        $item = instance.$results.find("." + instance.classes.item);
+      });
+
+      it("highlights item on 'touchstart'", function() {
+        $item.trigger("touchstart");
+
+        expect(instance.highlightResult).toHaveBeenCalled();
+      });
+
+      it("doesn't select result if 'touchmove' has been triggered", function() {
+        $item
+          .trigger("touchstart")
+          .trigger("touchmove")
+          .trigger("touchend");
+
+        expect(instance.selectResult).not.toHaveBeenCalled();
+      });
+
+      it("selects result if 'touchmove' hasn't been triggered", function() {
+        $item
+          .trigger("touchstart")
+          .trigger("touchend");
+
+        expect(instance.selectResult).toHaveBeenCalled();
+      });
+
+    });
   });
 });
