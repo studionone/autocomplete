@@ -52,6 +52,11 @@ define([ "jquery" ], function($) {
       },
     });
 
+    this.$el = $(this.config.el);
+    if (!this.$el.length) {
+      return;
+    }
+
     // make sure threshold isn't lower than 1
     this.config.threshold < 1 && (this.config.threshold = 1);
 
@@ -84,8 +89,6 @@ define([ "jquery" ], function($) {
           .addClass(this.classes.item.concat(" ", this.classes.empty, " ", this.classes.disabled))
           .html(this.config.templates.empty)
     };
-
-    this.$el = $(this.config.el);
 
     // turn off native browser autocomplete feature unless it's textarea
     !this.$el.is("textarea") && this.$el.attr("autocomplete", "off");

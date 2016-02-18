@@ -47,6 +47,12 @@ require([ "jquery", "autocomplete" ], function($, AutoComplete) {
         expect(instance.$el).toExist();
       });
 
+      it("should return if no element is selected", function() {
+        var instance = new AutoComplete({ el: ".js-foo" });
+
+        expect(instance).not.toExist();
+      });
+
       it("should have autocomplete='off' attribute", function() {
         expect(instance.$el).toHaveAttr("autocomplete", "off");
       });
