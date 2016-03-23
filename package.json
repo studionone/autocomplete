@@ -18,5 +18,6 @@
     "grunt-contrib-copy": "latest",
     "jasmine-jquery": "~1.3.3",
     "grunt-bump": "0.0.13"
-  }
+  },
+  "main": "src/js/autocomplete.js"
 }
