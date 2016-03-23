@@ -1,6 +1,7 @@
 "use strict";
 
-var $ = require('jquery');
+// We expect you to provide jQuery on a global (specifically for Accelerator)
+//var $ = require('jquery');
 
 var defaults = {
     el: ".js-autocomplete",
